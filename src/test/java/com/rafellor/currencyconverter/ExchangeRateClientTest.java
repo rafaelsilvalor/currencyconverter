@@ -1,13 +1,16 @@
 package com.rafellor.currencyconverter;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ExchangeRateClientTest {
 
     @Test
-    void testWelcomeMessage() {
+    void testGetExchangeRateReturnsValueGreaterThanZero() throws Exception {
         ExchangeRateClient client = new ExchangeRateClient();
-        assertEquals("Currency Converter is ready!", client.getWelcomeMessage());
+        double rate = client.getExchangeRate("USD", "BRL");
+
+        assertTrue(rate > 0, "A taxa de câmbio deve ser maior que zero.");
     }
 }
