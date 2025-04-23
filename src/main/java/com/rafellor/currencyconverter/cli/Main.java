@@ -19,7 +19,7 @@ public class Main {
         // User Input
         System.out.print("Enter amount: ");
         double amount = scanner.nextDouble();
-        scanner.nextLine(); // consume newline
+        scanner.nextLine();
 
         System.out.print("From currency (e.g., USD): ");
         String from = scanner.nextLine().toUpperCase();
