@@ -1,20 +1,24 @@
 package com.rafellor.currencyconverter.infrastructure.api;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.rafellor.currencyconverter.infrastructure.config.ConfigLoader;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class ExchangeRateClient {
+    private final String apikey;
 
-    private static final String API_KEY = "50a68485c0cfeec20c557e17";
-    private static final String BASE_URL = "https://v6.exchangerate-api.com/v6/";
+    public ExchangeRateClient(ConfigLoader configLoader) {
+        this.apikey = configLoader.get("API_KEY");
+    }
 
     public double getExchangeRate(String from, String to) throws IOException, InterruptedException {
-        String url = BASE_URL + API_KEY + "/pair/" + from + "/" + to;
+        String url = "https://v6.exchangerate-api.com/v6/" + apikey + "/pair/" + from + "/" + to;
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
