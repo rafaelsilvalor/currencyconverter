@@ -11,7 +11,7 @@ public class CommandLineDispatcher {
     private final CurrencyConverter converter = new CurrencyConverter(service);
 
     public void handle(String[] args) {
-        if (args.length == 1 && args[0].equalsIgnoreCase("--list")) {
+        if (args.length == 2 && args[0].equalsIgnoreCase("cc") && args[1].equalsIgnoreCase("--list")) {
             handleList();
         } else if (args.length == 4 && args[0].equalsIgnoreCase("cc")) {
             handleCommand(args);
@@ -19,6 +19,7 @@ public class CommandLineDispatcher {
             new InteractiveConsoleUI(converter).start();
         }
     }
+
 
     private void handleList() {
         System.out.println("== Supported Currencies ==\n");

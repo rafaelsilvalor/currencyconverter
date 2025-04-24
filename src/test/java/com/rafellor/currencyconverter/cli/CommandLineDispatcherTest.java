@@ -27,7 +27,7 @@ public class CommandLineDispatcherTest {
     @Test
     void shouldPrintSupportedCurrenciesWhenListFlagIsUsed() {
         CommandLineDispatcher dispatcher = new CommandLineDispatcher();
-        dispatcher.handle(new String[] {"--list"});
+        dispatcher.handle(new String[] {"cc", "--list"});
 
         String output = outContent.toString().toLowerCase();
         assertTrue(output.contains("supported currencies"));
