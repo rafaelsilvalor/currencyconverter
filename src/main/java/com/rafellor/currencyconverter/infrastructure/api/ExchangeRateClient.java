@@ -20,18 +20,21 @@ public class ExchangeRateClient implements ExchangeRateService {
 
     @Override
     public double getExchangeRate(String from, String to) {
-        try {
-            String url = "https://v6.exchangerate-api.com/v6/" + apikey + "/pair/" + from + "/" + to;
+        String url = "https://v6.exchangerate-api.com/v6/" + apikey + "/pair/" + from + "/" + to;
+        System.out.println("-- Fetching exchange rate from API");
+        System.out.println("-- URL: " + url);
 
+        try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
-
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            System.out.println("-- API Response: " + response.body());
 
             JsonObject json = JsonParser.parseString(response.body()).getAsJsonObject();
             return json.get("conversion_rate").getAsDouble();
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException("Failed to fetch exchange rate", e);
+            throw new RuntimeException("!! Failed to fetch exchange rate", e);
         }
     }
 }

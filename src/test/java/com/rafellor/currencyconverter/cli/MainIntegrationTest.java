@@ -14,30 +14,39 @@ public class MainIntegrationTest {
     private ByteArrayOutputStream outContent;
 
     @BeforeEach
-    void setUpStream(){
+    void setUpStreams() {
         outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
     }
 
-   @AfterEach
-   void restoreStreams() {
+    @AfterEach
+    void restoreStreams() {
         System.setIn(originalIn);
         System.setOut(originalOut);
-   }
+    }
 
-   @Test
-   void testCliConversionFlow() {
-        // simulate user input: amount, from, to
+    @Test
+    void testCliConversionFlow() {
+        // Simulate user input
         String simulatedInput = "10\nUSD\nBRL\n";
         System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
 
-
-        // Run main ClI
+        // Run Main in interactive mode
         Main.main(new String[]{});
 
-        String output = outContent.toString();
+        String output = outContent.toString().toUpperCase();
+        output = output.replace(',', '.'); // normalize commas to dots
 
-        // Check that prompts and result were printed
-        assertTrue(output.contains("Enter amount"));
+        // Validate prompts
+        assertTrue(output.contains("AMOUNT:"), "Missing amount prompt");
+        assertTrue(output.contains("FROM CURRENCY"), "Missing from currency prompt");
+        assertTrue(output.contains("TO CURRENCY"), "Missing to currency prompt");
+
+        // Validate final conversion line
+        assertTrue(
+                output.matches("(?s).*==\\s*\\d+\\.\\d+\\s+[A-Z]{3}\\s*==\\s*\\d+\\.\\d+\\s+[A-Z]{3}.*"),
+                "Expected conversion result format not found"
+        );
     }
+
 }
