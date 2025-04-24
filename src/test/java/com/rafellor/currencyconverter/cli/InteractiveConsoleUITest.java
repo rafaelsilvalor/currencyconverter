@@ -5,10 +5,12 @@ import com.rafellor.currencyconverter.domain.ExchangeRateService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class InteractiveConsoleUITest {
     private final InputStream originalIn = System.in;
@@ -34,9 +36,11 @@ public class InteractiveConsoleUITest {
         System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
 
         // use a simple mock of ExchangeRateService
-        ExchangeRateService mockService = (from, to) -> 5.0;
-        CurrencyConverter converter = new CurrencyConverter(mockService);
+        ExchangeRateService mockService = Mockito.mock(ExchangeRateService.class);
+        when(mockService.getExchangeRate("USD", "BRL")).thenReturn(5.0);
 
+
+        CurrencyConverter converter = new CurrencyConverter(mockService);
         InteractiveConsoleUI ui = new InteractiveConsoleUI(converter);
         ui.start();
 

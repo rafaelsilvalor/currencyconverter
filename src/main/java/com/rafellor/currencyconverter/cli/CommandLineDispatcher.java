@@ -13,6 +13,9 @@ public class CommandLineDispatcher {
     public void handle(String[] args) {
         if (args.length == 2 && args[0].equalsIgnoreCase("cc") && args[1].equalsIgnoreCase("--list")) {
             handleList();
+        } else if (args.length == 2 && args[0].equalsIgnoreCase("cc") == args[1].equalsIgnoreCase("--menu"))  {
+            new MenuUI(converter, service).start();
+
         } else if (args.length == 4 && args[0].equalsIgnoreCase("cc")) {
             handleCommand(args);
         } else {
