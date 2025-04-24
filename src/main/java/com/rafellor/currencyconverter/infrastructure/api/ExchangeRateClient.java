@@ -15,6 +15,7 @@ import java.util.List;
 
 public class ExchangeRateClient implements ExchangeRateService {
     private final String apikey;
+    private final HttpClient client = HttpClient.newHttpClient();
 
     public ExchangeRateClient(ConfigLoader configLoader) {
         this.apikey = configLoader.get("API_KEY");
@@ -27,7 +28,6 @@ public class ExchangeRateClient implements ExchangeRateService {
         System.out.println("-- URL: " + url);
 
         try {
-            HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -46,7 +46,6 @@ public class ExchangeRateClient implements ExchangeRateService {
         System.out.println("-- URL: " + url);
 
         try {
-            HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
