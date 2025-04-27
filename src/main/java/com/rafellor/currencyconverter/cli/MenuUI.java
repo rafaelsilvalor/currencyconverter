@@ -2,6 +2,7 @@ package com.rafellor.currencyconverter.cli;
 
 import com.rafellor.currencyconverter.application.CurrencyConverter;
 import com.rafellor.currencyconverter.domain.ExchangeRateService;
+import com.rafellor.currencyconverter.infrastructure.favorites.FavoritesManager;
 
 import java.util.Scanner;
 
@@ -20,8 +21,9 @@ public class MenuUI {
             printMenu();
             String input = scanner.nextLine().trim();
             switch (input) {
-                case "1" -> handleConversion();
-                case "2" -> handleList();
+                case "1" -> handleFavorites();
+                case "2" -> handleConversion();
+                case "3" -> handleList();
                 case "0" -> {
                     System.out.println("Goodbye!");
                     return;
@@ -33,10 +35,16 @@ public class MenuUI {
 
     private void printMenu() {
         System.out.println("\n==== Currency Converter ====");
-        System.out.println("1) Convert currency");
-        System.out.println("2) List supported currencies");
+        System.out.println("1) Favorites");
+        System.out.println("2) Convert currency");
+        System.out.println("3) List supported currencies");
         System.out.println("0) Exit");
         System.out.println("Select an option: ");
+    }
+
+    private void handleFavorites() {
+        FavoritesManager favoritesManager = new FavoritesManager("favorites.properties");
+        new FavoritesMenuUI(converter, favoritesManager).start();
     }
 
     private void handleConversion() {
