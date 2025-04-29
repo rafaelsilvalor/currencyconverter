@@ -23,7 +23,6 @@ public class CommandLineDispatcher {
         }
     }
 
-
     private void handleList() {
         System.out.println("== Supported Currencies ==\n");
         ExchangeRateClient client = new ExchangeRateClient(new ConfigLoader());
