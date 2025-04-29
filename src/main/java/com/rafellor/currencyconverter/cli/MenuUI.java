@@ -21,7 +21,8 @@ public class MenuUI {
             printMenu();
             String input = scanner.nextLine().trim();
             switch (input) {
-                case "1" -> handleFavorites();
+//                case "1" -> handleFavorites();
+                case "1" -> openFavoritesMenu();
                 case "2" -> handleConversion();
                 case "3" -> handleList();
                 case "0" -> {
@@ -42,10 +43,16 @@ public class MenuUI {
         System.out.println("Select an option: ");
     }
 
-    private void handleFavorites() {
-        FavoritesManager favoritesManager = new FavoritesManager("favorites.properties");
-        new FavoritesMenuUI(converter, favoritesManager).start();
+    private void openFavoritesMenu() {
+       FavoritesManager favoritesManager = new FavoritesManager("favorites.properties");
+       FavoritesMenuUI favoritesMenuUI = new FavoritesMenuUI(converter, favoritesManager);
+       favoritesMenuUI.start();
     }
+
+//    private void handleFavorites() {
+//        FavoritesManager favoritesManager = new FavoritesManager("favorites.properties");
+//        new FavoritesMenuUI(converter, favoritesManager).start();
+//    }
 
     private void handleConversion() {
         System.out.print("Amount: ");
@@ -61,5 +68,12 @@ public class MenuUI {
 
     private void handleList() {
         client.getSupportedCodes().forEach(System.out::println);
+    }
+
+    // for the future
+    private void clearConsole() {
+        for (int i = 0 ; i < 30; i++) {
+            System.out.println();
+        }
     }
 }
