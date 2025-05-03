@@ -5,12 +5,13 @@ import com.rafellor.currencyconverter.domain.ExchangeRateService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
 public class InteractiveConsoleUITest {
     private final InputStream originalIn = System.in;
@@ -31,23 +32,32 @@ public class InteractiveConsoleUITest {
 
     @Test
     void shouldHandleInteractiveFlowSuccessfully() {
-        // simulate user input: amount, from, to
+        // Simulated input: amount, from, to
         String simulatedInput = "10\nUSD\nBRL\n";
         System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
 
-        // use a simple mock of ExchangeRateService
-        ExchangeRateService mockService = Mockito.mock(ExchangeRateService.class);
-        when(mockService.getExchangeRate("USD", "BRL")).thenReturn(5.0);
+        ResourceBundle messages = ResourceBundle.getBundle("messages", Locale.ENGLISH);
 
+        ExchangeRateService mockService = new ExchangeRateService() {
+            public double getExchangeRate(String from, String to) {
+                return 5.0;
+            }
 
+            public List<String> getSupportedCodes() {
+                return List.of("USD", "BRL");
+            }
+        };
         CurrencyConverter converter = new CurrencyConverter(mockService);
-        InteractiveConsoleUI ui = new InteractiveConsoleUI(converter);
+
+        InteractiveConsoleUI ui = new InteractiveConsoleUI(converter, messages);
         ui.start();
 
-        String output = outContent.toString().toLowerCase();
-        assertTrue(output.contains("amount"));
-        assertTrue(output.contains("from currency"));
-        assertTrue(output.contains("to currency"));
+        String output = outContent.toString();
+        System.out.println("Captured output:\n" + output); // For debug
+
+        assertTrue(output.contains(messages.getString("prompt.amount")));
+        assertTrue(output.contains(messages.getString("prompt.from")));
+        assertTrue(output.contains(messages.getString("prompt.to")));
         assertTrue(output.contains("=="));
     }
 }

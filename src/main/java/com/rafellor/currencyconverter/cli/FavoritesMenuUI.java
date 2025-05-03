@@ -1,42 +1,57 @@
 package com.rafellor.currencyconverter.cli;
 
 import com.rafellor.currencyconverter.application.CurrencyConverter;
+import com.rafellor.currencyconverter.domain.ExchangeRateService;
 import com.rafellor.currencyconverter.domain.Favorite;
 import com.rafellor.currencyconverter.infrastructure.favorites.FavoritesManager;
 
+import java.text.MessageFormat;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Scanner;
+
+import static com.rafellor.currencyconverter.cli.util.ConsoleUtils.clearConsole;
+import static com.rafellor.currencyconverter.cli.util.ConsoleUtils.waitForUser;
 
 public class FavoritesMenuUI {
     private final Scanner scanner = new Scanner(System.in);
     private final CurrencyConverter converter;
+    private final ExchangeRateService client;
     private final FavoritesManager favoritesManager;
+    private final ResourceBundle messages;
 
     private static final int PAGE_SIZE = 5;
     private int currentPage = 0;
 
-    public FavoritesMenuUI(CurrencyConverter converter, FavoritesManager favoritesManager) {
+    public FavoritesMenuUI(CurrencyConverter converter, ExchangeRateService client, FavoritesManager favoritesManager, ResourceBundle messages) {
         this.converter = converter;
+        this.client = client;
         this.favoritesManager = favoritesManager;
+        this.messages = messages;
     }
 
     public void start() {
         while (true) {
+            clearConsole();
             List<Favorite> allFavorites = favoritesManager.getFavorites();
             int totalPages = (int) Math.ceil((double) allFavorites.size() / PAGE_SIZE);
             List<Favorite> pageFavorites = getCurrentPageFavorites(allFavorites);
 
-            System.out.println("\n==== Favorites ====");
+            System.out.println("\n==== " + messages.getString("favorites.title") + " ====\n");
             for (int i = 0; i < pageFavorites.size(); i++) {
                 System.out.printf("%d) %s\n", i + 1, pageFavorites.get(i));
             }
-            System.out.printf("Page %d/%d\n", currentPage + 1, Math.max(totalPages, 1));
-            System.out.println("6) Previous page");
-            System.out.println("7) Next page");
-            System.out.println("8) Add new favorite");
-            System.out.println("9) Remove a favorite");
-            System.out.println("0) Back");
-            System.out.print("Choose an option: ");
+            System.out.println();
+            String pageInfo = MessageFormat.format(messages.getString("favorites.page"),
+                    currentPage + 1, Math.max(totalPages, 1));
+            System.out.println(pageInfo);
+
+            System.out.println("\n6) " + messages.getString("favorites.option.previous"));
+            System.out.println("7) " + messages.getString("favorites.option.next")+"\n");
+            System.out.println("8) " + messages.getString("favorites.option.add"));
+            System.out.println("9) " + messages.getString("favorites.option.remove"));
+            System.out.println("0) " + messages.getString("favorites.option.back")+"\n");
+            System.out.print(messages.getString("menu.prompt") + " ");
 
             String choice = scanner.nextLine();
             switch (choice) {
@@ -52,7 +67,7 @@ public class FavoritesMenuUI {
                 case "0" -> {
                     return;
                 }
-                default -> System.out.println("Invalid option.");
+                default -> System.out.println(messages.getString("error.invalid.option"));
             }
         }
     }
@@ -67,48 +82,100 @@ public class FavoritesMenuUI {
         int index = Integer.parseInt(choice) - 1;
         if (index < pageFavorites.size()) {
             Favorite selected = pageFavorites.get(index);
-
-            System.out.print("Enter amount to convert: ");
-            double amount;
             try {
-                amount = Double.parseDouble(scanner.nextLine());
+                System.out.print(messages.getString("prompt.amount") + " ");
+                double amount = Double.parseDouble(scanner.nextLine());
+                double result = converter.convert(amount, selected.from(), selected.to());
+                System.out.printf("== %.2f %s == %.2f %s\n", amount, selected.from(), result, selected.to());
             } catch (NumberFormatException e) {
-                System.out.println("Invalid amount entered.");
-                return;
+                System.out.println(messages.getString("favorites.invalid.amount"));
             }
-
-            double result = converter.convert(amount, selected.from(), selected.to());
-            System.out.printf("== %.2f %s == %.2f %s%n", amount, selected.from(), result, selected.to());
         } else {
-            System.out.println("Invalid favorite selection.");
+            System.out.println(messages.getString("favorites.invalid.selection"));
         }
+        waitForUser(messages.getString("prompt.continue"));
     }
 
-
     private void addFavorite() {
-        System.out.print("From currency (e.g. USD): ");
+        clearConsole();
+        System.out.print(messages.getString("favorites.prompt.from") + " ");
         String from = scanner.nextLine().toUpperCase();
-        System.out.print("To currency (e.g. BRL): ");
+        System.out.print(messages.getString("favorites.prompt.to") + " ");
         String to = scanner.nextLine().toUpperCase();
+
+        // Extract just the codes (first 3 letters) from the formatted list
+        List<String> validCodes = client.getSupportedCodes().stream()
+                .map(line -> line.substring(0, 3)) // "USD   : ..." -> "USD"
+                .toList();
+
+        if (!validCodes.contains(from) || !validCodes.contains(to)) {
+            System.out.println(messages.getString("favorites.unsupported.code"));
+            return;
+        }
+
+
         favoritesManager.addFavorite(new Favorite(from, to));
-        System.out.println("Favorite added!");
+        System.out.println(messages.getString("favorites.added"));
+        waitForUser(messages.getString("prompt.continue"));
     }
 
     private void removeFavorite(List<Favorite> allFavorites) {
-        for (int i = 0; i < allFavorites.size(); i++) {
-            System.out.printf("%d) %s\n", i + 1, allFavorites.get(i));
-        }
-        System.out.print("Enter the number of the favorite to remove: ");
-        try {
-            int index = Integer.parseInt(scanner.nextLine()) - 1;
-            if (index >= 0 && index < allFavorites.size()) {
-                favoritesManager.removeFavorite(allFavorites.get(index));
-                System.out.println("Favorite removed!");
-            } else {
-                System.out.println("Invalid index.");
+
+        boolean done = false;
+        while (!done){
+            clearConsole();
+
+            System.out.println("\n==== " + messages.getString("favorites.option.remove") + " ====\n");
+            System.out.println("0) " + messages.getString("favorites.option.back") + "\n");
+
+            for (int i = 0; i < allFavorites.size(); i++) {
+                System.out.printf("%d) %s%n", i + 1, allFavorites.get(i));
             }
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input.");
+
+            System.out.print("\n" + messages.getString("favorites.prompt.select") + " ");
+
+            String line = scanner.nextLine();
+            int choice;
+
+            try {
+                choice = Integer.parseInt(line);
+            } catch (NumberFormatException e) {
+                System.out.println(messages.getString("favorites.invalid.input"));
+                waitForUser(messages.getString("prompt.continue"));
+                continue;
+            }
+
+            if (choice == 0) {
+                done= true;
+            } else if (choice >= 1 && choice <= allFavorites.size()) {
+
+                Favorite toRemove = allFavorites.get(choice - 1);
+                favoritesManager.removeFavorite(toRemove);
+                System.out.println(messages.getString("favorites.removed"));
+                done = true;
+            } else {
+                System.out.println(messages.getString("favorites.invalid.index"));
+                waitForUser(messages.getString("prompt.continue"));
+            }
         }
+
+
+//        clearConsole();
+//        for (int i = 0; i < allFavorites.size(); i++) {
+//            System.out.printf("%d) %s\n", i + 1, allFavorites.get(i));
+//        }
+//        System.out.print(messages.getString("favorites.prompt.select") + " ");
+//        try {
+//            int index = Integer.parseInt(scanner.nextLine()) - 1;
+//            if (index >= 0 && index < allFavorites.size()) {
+//                favoritesManager.removeFavorite(allFavorites.get(index));
+//                System.out.println(messages.getString("favorites.removed"));
+//            } else {
+//                System.out.println(messages.getString("favorites.invalid.index"));
+//            }
+//        } catch (NumberFormatException e) {
+//            System.out.println(messages.getString("favorites.invalid.input"));
+//        }
+//        waitForUser(messages.getString("prompt.continue"));
     }
 }

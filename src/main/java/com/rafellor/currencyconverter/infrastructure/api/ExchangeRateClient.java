@@ -24,14 +24,14 @@ public class ExchangeRateClient implements ExchangeRateService {
     @Override
     public double getExchangeRate(String from, String to) {
         String url = "https://v6.exchangerate-api.com/v6/" + apikey + "/pair/" + from + "/" + to;
-        System.out.println("-- Fetching exchange rate from API");
-        System.out.println("-- URL: " + url);
+//        System.out.println("-- Fetching exchange rate from API");
+//        System.out.println("-- URL: " + url);
 
         try {
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            System.out.println("-- API Response: " + response.body());
+//            System.out.println("-- API Response: " + response.body());
 
             JsonObject json = JsonParser.parseString(response.body()).getAsJsonObject();
             return json.get("conversion_rate").getAsDouble();
@@ -42,8 +42,9 @@ public class ExchangeRateClient implements ExchangeRateService {
 
     public List<String> getSupportedCodes() {
         String url = "https://v6.exchangerate-api.com/v6/" + apikey + "/codes";
-        System.out.println("-- Fetching supported currency codes...");
-        System.out.println("-- URL: " + url);
+
+//        System.out.println("-- Fetching supported currency codes...");
+//        System.out.println("-- URL: " + url);
 
         try {
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();

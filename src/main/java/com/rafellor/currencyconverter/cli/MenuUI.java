@@ -5,9 +5,11 @@ import com.rafellor.currencyconverter.domain.ExchangeRateService;
 import com.rafellor.currencyconverter.infrastructure.favorites.FavoritesManager;
 
 import java.io.IOException;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Scanner;
+
+import static com.rafellor.currencyconverter.cli.util.ConsoleUtils.clearConsole;
+import static com.rafellor.currencyconverter.cli.util.ConsoleUtils.waitForUser;
 
 public class MenuUI {
     private final Scanner scanner = new Scanner(System.in);
@@ -15,10 +17,10 @@ public class MenuUI {
     private final ExchangeRateService client;
     private final ResourceBundle messages;
 
-    public MenuUI(CurrencyConverter converter, ExchangeRateService client) {
+    public MenuUI(CurrencyConverter converter, ExchangeRateService client, ResourceBundle messages) {
         this.converter = converter;
         this.client = client;
-        this.messages = ResourceBundle.getBundle("messages", Locale.getDefault()); // auto-detects pt-BR, en, etc.
+        this.messages = messages;
     }
 
     public void start() {
@@ -29,11 +31,12 @@ public class MenuUI {
                 case "1" -> openFavoritesMenu();
                 case "2" -> handleConversion();
                 case "3" -> handleList();
+                case "4" -> openSettingsMenu();
                 case "0" -> {
-                    System.out.println(messages.getString("menu.goodbye"));
+                    System.out.println(messages.getString("goodbye"));
                     return;
                 }
-                default -> System.out.println(messages.getString("menu.invalid"));
+                default -> System.out.println(messages.getString("error.invalid.option"));
             }
         }
     }
@@ -41,55 +44,49 @@ public class MenuUI {
     private void printMenu() {
         clearConsole();
         System.out.println("\n==== " + messages.getString("menu.title") + " ====\n");
-        System.out.println("1) " + messages.getString("menu.option.favorites"));
-        System.out.println("2) " + messages.getString("menu.option.convert"));
-        System.out.println("3) " + messages.getString("menu.option.list"));
-        System.out.println("0) " + messages.getString("menu.option.exit") + "\n");
-        System.out.print(messages.getString("menu.select"));
+        System.out.println("1) " + messages.getString("menu.favorites"));
+        System.out.println("2) " + messages.getString("menu.convert"));
+        System.out.println("3) " + messages.getString("menu.list"));
+        System.out.println("4) " + messages.getString("menu.settings"));
+        System.out.println("0) " + messages.getString("menu.exit")+"\n");
+        System.out.print(messages.getString("menu.prompt") + " ");
     }
 
     private void openFavoritesMenu() {
         FavoritesManager favoritesManager = new FavoritesManager("favorites.properties");
-        FavoritesMenuUI favoritesMenuUI = new FavoritesMenuUI(converter, favoritesManager);
+        FavoritesMenuUI favoritesMenuUI = new FavoritesMenuUI(converter, client, favoritesManager, messages);
         clearConsole();
         favoritesMenuUI.start();
     }
 
     private void handleConversion() {
-        System.out.print(messages.getString("prompt.amount"));
+        clearConsole();
+        System.out.println("\n==== " + messages.getString("menu.title") + " ====\n");
+        System.out.print(messages.getString("prompt.amount")+" ");
         double amount = Double.parseDouble(scanner.nextLine());
-
-        System.out.print(messages.getString("prompt.from"));
+        System.out.print(messages.getString("prompt.from")+" ");
         String from = scanner.nextLine().toUpperCase();
-
-        System.out.print(messages.getString("prompt.to"));
+        System.out.print(messages.getString("prompt.to")+" ");
         String to = scanner.nextLine().toUpperCase();
-
+        System.out.println();
         double result = converter.convert(amount, from, to);
         System.out.printf("== %.2f %s == %.2f %s%n", amount, from, result, to);
-
+        System.out.println();
         waitForUser(messages.getString("prompt.continue"));
     }
 
     private void handleList() {
+        clearConsole();
+        System.out.println("\n====== " + messages.getString("menu.list") + " ======\n");
         client.getSupportedCodes().forEach(System.out::println);
-        waitForUser(messages.getString("prompt.continue"));
+        System.out.println();
+        waitForUser(messages.getString("prompt.continue") + " ");
     }
 
-    private void waitForUser(String message) {
-        System.out.print(message);
-        scanner.nextLine();
+    private void openSettingsMenu() {
+        var settings = new java.util.Properties();
+        clearConsole();
+        new SettingsMenuUI(settings, messages).start();
     }
 
-    private void clearConsole() {
-        try {
-            if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-            } else {
-                new ProcessBuilder("clear").inheritIO().start().waitFor();
-            }
-        } catch (IOException | InterruptedException ex) {
-            for (int i = 0; i < 30; i++) System.out.println();
-        }
-    }
 }

@@ -2,32 +2,36 @@ package com.rafellor.currencyconverter.cli;
 
 import com.rafellor.currencyconverter.application.CurrencyConverter;
 
+import java.util.ResourceBundle;
 import java.util.Scanner;
 
 public class InteractiveConsoleUI {
+    private final Scanner scanner = new Scanner(System.in);
     private final CurrencyConverter converter;
+    private final ResourceBundle messages;
 
-    public InteractiveConsoleUI(CurrencyConverter converter) {
+    public InteractiveConsoleUI(CurrencyConverter converter, ResourceBundle messages) {
         this.converter = converter;
+        this.messages = messages;
     }
 
     public void start() {
-        Scanner scanner = new Scanner(System.in);
         try {
-            System.out.print("Amount: ");
-            double amount = scanner.nextDouble();
-            scanner.nextLine();
+            System.out.print(messages.getString("prompt.amount"));
+            double amount = Double.parseDouble(scanner.nextLine());
 
-            System.out.print("From currency (e.g., USD): ");
-            String from = scanner.nextLine().trim().toUpperCase();
+            System.out.print(messages.getString("prompt.from"));
+            String from = scanner.nextLine().toUpperCase();
 
-            System.out.print("To currency (e.g., BRL): ");
-            String to = scanner.nextLine().trim().toUpperCase();
+            System.out.print(messages.getString("prompt.to"));
+            String to = scanner.nextLine().toUpperCase();
 
             double result = converter.convert(amount, from, to);
             System.out.printf("== %.2f %s == %.2f %s%n", amount, from, result, to);
-        } catch (Exception e) {
-            System.out.println("!! Error: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println(messages.getString("favorites.invalid.amount"));
+        } catch (RuntimeException e) {
+            System.out.println(messages.getString("error.cli") + ": " + e.getMessage());
         }
     }
 }
