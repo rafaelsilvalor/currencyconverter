@@ -91,7 +91,7 @@ public class MenuUI {
 
     private void openFavoritesMenu() {
         FavoritesManager favoritesManager = new FavoritesManager("favorites.properties");
-        FavoritesMenuUI favoritesMenuUI = new FavoritesMenuUI(converter, client, favoritesManager, messages);
+        FavoritesMenuUI favoritesMenuUI = new FavoritesMenuUI(converter, client, favoritesManager,historyManager, messages);
         clearConsole();
         favoritesMenuUI.start();
     }
