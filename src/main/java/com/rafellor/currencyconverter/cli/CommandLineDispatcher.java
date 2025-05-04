@@ -35,7 +35,7 @@ public class CommandLineDispatcher {
         } else if (args.length == 1 && args[0].equalsIgnoreCase("cc")) {
             new InteractiveConsoleUI(converter, messages).start();
         } else if (args.length == 2 && args[0].equalsIgnoreCase("cc") && args[1].equalsIgnoreCase("--menu")) {
-            MenuUI menuUI = new MenuUI(converter, service, messages);
+            MenuUI menuUI = new MenuUI(converter, service, messages, historyManager);
             menuUI.start();
         } else {
             System.out.println(messages.getString("error.invalid.commandline"));
@@ -82,7 +82,4 @@ public class CommandLineDispatcher {
             );
         }
     }
-
-
-
 }
