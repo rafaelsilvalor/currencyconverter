@@ -2,14 +2,10 @@ package com.rafellor.currencyconverter.cli;
 
 import com.rafellor.currencyconverter.application.CurrencyConverter;
 import com.rafellor.currencyconverter.cli.util.HistoryUtils;
-import com.rafellor.currencyconverter.domain.ConversionRecord;
 import com.rafellor.currencyconverter.domain.ExchangeRateService;
 import com.rafellor.currencyconverter.infrastructure.favorites.FavoritesManager;
 import com.rafellor.currencyconverter.infrastructure.history.ConversionHistoryManager;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
@@ -111,18 +107,9 @@ public class MenuUI {
     private void handleRecentlyConverted() {
         clearConsole();
         System.out.println("\n====== " + messages.getString("menu.recentlyConverted") + " ======\n");
-        try {
-            List<ConversionRecord> recent = historyManager.loadRecent(10);
-            if (recent.isEmpty()) {
-                System.out.println(messages.getString("error.history"));
-            } else {
-                recent.forEach(System.out::println);
-            }
-        } catch (IOException e) {
-            System.out.println(
-                    MessageFormat.format(messages.getString("error.history"), e.getMessage())
-            );
-        }
+
+        HistoryUtils.showHistory(historyManager, messages, 10);
+
         System.out.println();
         waitForUser(messages.getString("prompt.continue") + " ");
     }

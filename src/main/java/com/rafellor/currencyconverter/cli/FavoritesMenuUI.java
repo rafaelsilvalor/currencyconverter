@@ -1,16 +1,13 @@
 package com.rafellor.currencyconverter.cli;
 
 import com.rafellor.currencyconverter.application.CurrencyConverter;
-import com.rafellor.currencyconverter.domain.ConversionRecord;
+import com.rafellor.currencyconverter.cli.util.HistoryUtils;
 import com.rafellor.currencyconverter.domain.Favorite;
 import com.rafellor.currencyconverter.domain.ExchangeRateService;
 import com.rafellor.currencyconverter.infrastructure.favorites.FavoritesManager;
 import com.rafellor.currencyconverter.infrastructure.history.ConversionHistoryManager;
 
-import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
@@ -94,22 +91,19 @@ public class FavoritesMenuUI {
                 System.out.printf("== %.2f %s == %.2f %s%n", amount, selected.from(), result, selected.to());
 
                 // Save to history
-                ConversionRecord record = new ConversionRecord(
-                        LocalDateTime.now(),
+                HistoryUtils.recordHistory(
+                        historyManager,
                         selected.from(),
                         selected.to(),
-                        BigDecimal.valueOf(amount),
-                        BigDecimal.valueOf(result)
+                        amount,
+                        result,
+                        messages
                 );
-                historyManager.save(record);
 
             } catch (NumberFormatException e) {
                 System.out.println(messages.getString("favorites.invalid.amount"));
-            } catch (IOException ioe) {
-                System.out.println(
-                        MessageFormat.format(messages.getString("error.history"), ioe.getMessage())
-                );
             }
+
         } else {
             System.out.println(messages.getString("favorites.invalid.selection"));
         }

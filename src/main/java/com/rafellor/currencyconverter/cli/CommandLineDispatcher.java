@@ -1,18 +1,13 @@
 package com.rafellor.currencyconverter.cli;
 
 import com.rafellor.currencyconverter.application.CurrencyConverter;
-import com.rafellor.currencyconverter.domain.ConversionRecord;
+import com.rafellor.currencyconverter.cli.util.HistoryUtils;
 import com.rafellor.currencyconverter.domain.ExchangeRateService;
 import com.rafellor.currencyconverter.infrastructure.api.ExchangeRateClient;
 import com.rafellor.currencyconverter.infrastructure.config.ConfigLoader;
-import com.rafellor.currencyconverter.infrastructure.favorites.FavoritesManager;
 import com.rafellor.currencyconverter.infrastructure.history.ConversionHistoryManager;
 
-import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class CommandLineDispatcher {
@@ -44,7 +39,6 @@ public class CommandLineDispatcher {
 
     private void handleList() {
         System.out.println(messages.getString("favorites.title"));
-//        ExchangeRateClient client = new ExchangeRateClient(new ConfigLoader());
         service.getSupportedCodes().forEach(System.out::println);
     }
 
@@ -63,19 +57,15 @@ public class CommandLineDispatcher {
                     result, command.to());
 
             // save history as before...
-            ConversionRecord record = new ConversionRecord(
-                    LocalDateTime.now(),
+            HistoryUtils.recordHistory(
+                    historyManager,
                     command.from(),
                     command.to(),
-                    BigDecimal.valueOf(command.amount()),
-                    BigDecimal.valueOf(result)
+                    command.amount(),
+                    result,
+                    messages
             );
-            historyManager.save(record);
 
-        } catch (IOException ioe) {
-            System.out.println(
-                    MessageFormat.format(messages.getString("error.history"), ioe.getMessage())
-            );
         } catch (Exception e) {
             System.out.println(
                     MessageFormat.format(messages.getString("error.cli"), e.getMessage())
