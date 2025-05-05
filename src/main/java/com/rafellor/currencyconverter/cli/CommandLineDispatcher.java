@@ -23,13 +23,13 @@ public class CommandLineDispatcher {
     }
 
     public void handle(String[] args) {
-        if (args.length == 2 && args[0].equalsIgnoreCase("cc") && args[1].equalsIgnoreCase("--list")) {
+        if (args.length == 2 && args[0].equalsIgnoreCase(CliConfig.COMMAND) && args[1].equalsIgnoreCase("--list")) {
             handleList();
-        } else if (args.length == 4 && args[0].equalsIgnoreCase("cc")) {
+        } else if (args.length == 4 && args[0].equalsIgnoreCase(CliConfig.COMMAND)) {
             handleCommand(args);
-        } else if (args.length == 1 && args[0].equalsIgnoreCase("cc")) {
+        } else if (args.length == 1 && args[0].equalsIgnoreCase(CliConfig.COMMAND)) {
             new InteractiveConsoleUI(converter, messages).start();
-        } else if (args.length == 2 && args[0].equalsIgnoreCase("cc") && args[1].equalsIgnoreCase("--menu")) {
+        } else if (args.length == 2 && args[0].equalsIgnoreCase(CliConfig.COMMAND) && args[1].equalsIgnoreCase("--menu")) {
             MenuUI menuUI = new MenuUI(converter, service, messages, historyManager);
             menuUI.start();
         } else {
