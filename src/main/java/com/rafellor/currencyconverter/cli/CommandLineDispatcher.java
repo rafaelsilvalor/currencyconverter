@@ -1,7 +1,7 @@
 package com.rafellor.currencyconverter.cli;
 
 import com.rafellor.currencyconverter.application.CurrencyConverter;
-import com.rafellor.currencyconverter.cli.util.HistoryUtils;
+import com.rafellor.currencyconverter.cli.util.ConversionHandler;
 import com.rafellor.currencyconverter.domain.ExchangeRateService;
 import com.rafellor.currencyconverter.infrastructure.api.ExchangeRateClient;
 import com.rafellor.currencyconverter.infrastructure.config.ConfigLoader;
@@ -44,25 +44,15 @@ public class CommandLineDispatcher {
 
     private void handleCommand(String[] args) {
         try {
-            // instead of stripping "cc", just give them all back to the parser:
+
             var command = CommandLineParser.parse(args);
 
-            double result = converter.convert(
+            ConversionHandler.perform(
                     command.amount(),
-                    command.from(),
-                    command.to()
-            );
-            System.out.printf("== %.2f %s == %.2f %s%n",
-                    command.amount(), command.from(),
-                    result, command.to());
-
-            // save history as before...
-            HistoryUtils.recordHistory(
-                    historyManager,
                     command.from(),
                     command.to(),
-                    command.amount(),
-                    result,
+                    converter,
+                    historyManager,
                     messages
             );
 

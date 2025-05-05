@@ -1,7 +1,7 @@
 package com.rafellor.currencyconverter.cli;
 
 import com.rafellor.currencyconverter.application.CurrencyConverter;
-import com.rafellor.currencyconverter.cli.util.HistoryUtils;
+import com.rafellor.currencyconverter.cli.util.ConversionHandler;
 import com.rafellor.currencyconverter.domain.Favorite;
 import com.rafellor.currencyconverter.domain.ExchangeRateService;
 import com.rafellor.currencyconverter.infrastructure.favorites.FavoritesManager;
@@ -85,18 +85,17 @@ public class FavoritesMenuUI {
         if (index < pageFavorites.size()) {
             Favorite selected = pageFavorites.get(index);
             try {
+
+
                 System.out.print(messages.getString("prompt.amount") + " ");
                 double amount = Double.parseDouble(scanner.nextLine());
-                double result = converter.convert(amount, selected.from(), selected.to());
-                System.out.printf("== %.2f %s == %.2f %s%n", amount, selected.from(), result, selected.to());
 
-                // Save to history
-                HistoryUtils.recordHistory(
-                        historyManager,
+                ConversionHandler.perform(
+                        amount,
                         selected.from(),
                         selected.to(),
-                        amount,
-                        result,
+                        converter,
+                        historyManager,
                         messages
                 );
 

@@ -1,6 +1,7 @@
 package com.rafellor.currencyconverter.cli;
 
 import com.rafellor.currencyconverter.application.CurrencyConverter;
+import com.rafellor.currencyconverter.cli.util.ConversionHandler;
 import com.rafellor.currencyconverter.cli.util.HistoryUtils;
 import com.rafellor.currencyconverter.domain.ExchangeRateService;
 import com.rafellor.currencyconverter.infrastructure.favorites.FavoritesManager;
@@ -74,19 +75,17 @@ public class MenuUI {
         System.out.print(messages.getString("prompt.to")+" ");
         String to = scanner.nextLine().toUpperCase();
         System.out.println();
-        double result = converter.convert(amount, from, to);
-        System.out.printf("== %.2f %s == %.2f %s%n", amount, from, result, to);
-        System.out.println();
 
-        HistoryUtils.recordHistory(
-                historyManager,
+        ConversionHandler.perform(
+                amount,
                 from,
                 to,
-                amount,
-                result,
+                converter,
+                historyManager,
                 messages
         );
 
+        System.out.println();
         waitForUser(messages.getString("prompt.continue"));
     }
 
