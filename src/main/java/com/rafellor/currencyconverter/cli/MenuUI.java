@@ -1,10 +1,11 @@
 package com.rafellor.currencyconverter.cli;
 
 import com.rafellor.currencyconverter.application.CurrencyConverter;
+import com.rafellor.currencyconverter.cli.util.HistoryUtils;
 import com.rafellor.currencyconverter.domain.ExchangeRateService;
 import com.rafellor.currencyconverter.infrastructure.favorites.FavoritesManager;
+import com.rafellor.currencyconverter.infrastructure.history.ConversionHistoryManager;
 
-import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
@@ -16,11 +17,13 @@ public class MenuUI {
     private final CurrencyConverter converter;
     private final ExchangeRateService client;
     private final ResourceBundle messages;
+    private final ConversionHistoryManager historyManager;
 
-    public MenuUI(CurrencyConverter converter, ExchangeRateService client, ResourceBundle messages) {
+    public MenuUI(CurrencyConverter converter, ExchangeRateService client, ResourceBundle messages, ConversionHistoryManager historyManager) {
         this.converter = converter;
         this.client = client;
         this.messages = messages;
+        this.historyManager = historyManager;
     }
 
     public void start() {
@@ -30,8 +33,9 @@ public class MenuUI {
             switch (input) {
                 case "1" -> openFavoritesMenu();
                 case "2" -> handleConversion();
-                case "3" -> handleList();
-                case "4" -> openSettingsMenu();
+                case "3" -> handleRecentlyConverted();
+                case "4" -> handleList();
+                case "5" -> openSettingsMenu();
                 case "0" -> {
                     System.out.println(messages.getString("goodbye"));
                     return;
@@ -46,15 +50,16 @@ public class MenuUI {
         System.out.println("\n==== " + messages.getString("menu.title") + " ====\n");
         System.out.println("1) " + messages.getString("menu.favorites"));
         System.out.println("2) " + messages.getString("menu.convert"));
-        System.out.println("3) " + messages.getString("menu.list"));
-        System.out.println("4) " + messages.getString("menu.settings"));
+        System.out.println("3) " + messages.getString("menu.recentlyConverted"));
+        System.out.println("4) " + messages.getString("menu.list"));
+        System.out.println("5) " + messages.getString("menu.settings"));
         System.out.println("0) " + messages.getString("menu.exit")+"\n");
         System.out.print(messages.getString("menu.prompt") + " ");
     }
 
     private void openFavoritesMenu() {
         FavoritesManager favoritesManager = new FavoritesManager("favorites.properties");
-        FavoritesMenuUI favoritesMenuUI = new FavoritesMenuUI(converter, client, favoritesManager, messages);
+        FavoritesMenuUI favoritesMenuUI = new FavoritesMenuUI(converter, client, favoritesManager,historyManager, messages);
         clearConsole();
         favoritesMenuUI.start();
     }
@@ -72,6 +77,16 @@ public class MenuUI {
         double result = converter.convert(amount, from, to);
         System.out.printf("== %.2f %s == %.2f %s%n", amount, from, result, to);
         System.out.println();
+
+        HistoryUtils.recordHistory(
+                historyManager,
+                from,
+                to,
+                amount,
+                result,
+                messages
+        );
+
         waitForUser(messages.getString("prompt.continue"));
     }
 
@@ -89,4 +104,13 @@ public class MenuUI {
         new SettingsMenuUI(settings, messages).start();
     }
 
+    private void handleRecentlyConverted() {
+        clearConsole();
+        System.out.println("\n====== " + messages.getString("menu.recentlyConverted") + " ======\n");
+
+        HistoryUtils.showHistory(historyManager, messages, 10);
+
+        System.out.println();
+        waitForUser(messages.getString("prompt.continue") + " ");
+    }
 }

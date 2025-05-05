@@ -1,8 +1,12 @@
 package com.rafellor.currencyconverter.cli;
 
+import com.rafellor.currencyconverter.infrastructure.history.ConversionHistoryManager;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -28,9 +32,13 @@ public class Main {
         Locale locale = new Locale(lang, country);
         ResourceBundle messages = ResourceBundle.getBundle("messages", locale);
 
+        // Instantiate history manager
+        Path historyPath = Paths.get("conversion-history.txt");
+        ConversionHistoryManager historyManager = new ConversionHistoryManager(historyPath);
+
 
         // Start the dispatcher
-        CommandLineDispatcher dispatcher = new CommandLineDispatcher(messages);
+        CommandLineDispatcher dispatcher = new CommandLineDispatcher(messages, historyManager);
         dispatcher.handle(args);
     }
 }

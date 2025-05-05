@@ -36,3 +36,8 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### My Files ###
+settings/settings.properties
+estrutura.txt
+conversion-history.txt
