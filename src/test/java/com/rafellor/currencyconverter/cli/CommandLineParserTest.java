@@ -11,7 +11,7 @@ public class CommandLineParserTest {
 
     @Test
     void shouldParseValidCurrencyCommand(){
-        String[] args = {"cc", "usd", "brl", "50.0"};
+        String[] args = {"cvc", "usd", "brl", "50.0"};
         CommandLineParser.Command command = CommandLineParser.parse(args);
 
 
@@ -22,7 +22,7 @@ public class CommandLineParserTest {
 
     @Test
     void shouldThrowOnInvalidCommandFormat() {
-        String[] args = {"cc", "usd", "brl"};
+        String[] args = {"cvc", "usd", "brl"};
         assertThrows(IllegalArgumentException.class, () -> CommandLineParser.parse(args));
     }
 }

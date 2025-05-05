@@ -32,7 +32,7 @@ public class CommandLineDispatcherTest {
         CommandLineDispatcher dispatcher =
                 new CommandLineDispatcher(messages, historyManager);
 
-        dispatcher.handle(new String[]{"cc", "--list"});
+        dispatcher.handle(new String[]{"cvc", "--list"});
 
         String output = outContent.toString().toLowerCase();
         assertTrue(output.contains("usd") || output.contains("eur") || output.contains("brl"));
@@ -45,7 +45,7 @@ public class CommandLineDispatcherTest {
         CommandLineDispatcher dispatcher =
                 new CommandLineDispatcher(messages, historyManager);
 
-        dispatcher.handle(new String[]{"cc", "--wrong"});
+        dispatcher.handle(new String[]{"cvc", "--wrong"});
 
         String output = outContent.toString();
         assertTrue(output.contains(messages.getString("error.invalid.commandline")));
