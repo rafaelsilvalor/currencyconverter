@@ -1,7 +1,5 @@
 package com.rafellor.currencyconverter.cli;
 
-import java.util.function.DoubleToLongFunction;
-
 public class CommandLineParser {
 
     public record Command(String from, String to, double amount) {}
