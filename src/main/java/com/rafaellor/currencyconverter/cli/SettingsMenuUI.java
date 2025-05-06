@@ -73,7 +73,9 @@ public class SettingsMenuUI {
 
         try {
             File file = new File(settingsFile);
-            file.getParentFile().mkdirs(); // Ensure the 'settings' folder exists
+
+            // Ensure the 'settings' folder exists
+            file.getParentFile().mkdirs();
 
             try (OutputStream out = new FileOutputStream(file)) {
                 settings.store(out, "Currency Converter Settings");

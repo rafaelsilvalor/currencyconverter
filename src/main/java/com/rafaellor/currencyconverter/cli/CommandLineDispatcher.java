@@ -1,4 +1,3 @@
-// src/main/java/com/rafaellor/currencyconverter/cli/CommandLineDispatcher.java
 package com.rafaellor.currencyconverter.cli;
 
 import com.rafaellor.currencyconverter.cli.handlers.CommandHandler;
