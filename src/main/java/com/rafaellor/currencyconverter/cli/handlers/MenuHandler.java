@@ -1,4 +1,3 @@
-// src/main/java/com/rafellor/currencyconverter/cli/handlers/MenuHandler.java
 package com.rafaellor.currencyconverter.cli.handlers;
 
 import com.rafaellor.currencyconverter.application.CurrencyConverter;

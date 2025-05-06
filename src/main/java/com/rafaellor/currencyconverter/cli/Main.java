@@ -1,4 +1,3 @@
-// src/main/java/com/rafaellor/currencyconverter/cli/Main.java
 package com.rafaellor.currencyconverter.cli;
 
 import java.io.IOException;
@@ -12,7 +11,7 @@ import java.util.ResourceBundle;
 
 public class Main {
     public static void main(String[] args) {
-        // ─── 1) Load user settings ───────────────────────────────────────────────
+        // Load user settings
         Path settingsPath = Paths.get("settings/settings.properties");
         Properties settings = new Properties();
 
@@ -26,16 +25,16 @@ public class Main {
             System.err.println("Warning: Settings file not found. Using defaults.");
         }
 
-        // ─── 2) Initialize Locale & ResourceBundle ─────────────────────────────
+        // Initialize Locale & ResourceBundle
         String lang    = settings.getProperty("language", "en");
         String country = settings.getProperty("country",  "US");
         Locale locale  = new Locale(lang, country);
         ResourceBundle messages = ResourceBundle.getBundle("messages", locale);
 
-        // ─── 3) Instantiate dispatcher (auto‑discovers ALL handlers) ──────────
+        // Instantiate dispatcher (auto‑discovers ALL handlers) ──────────
         CommandLineDispatcher dispatcher = new CommandLineDispatcher(messages);
 
-        // ─── 4) Hand off to the dispatcher ─────────────────────────────────────
+        //  Hand off to the dispatcher
         dispatcher.handle(args);
     }
 }
