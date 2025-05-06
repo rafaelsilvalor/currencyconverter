@@ -23,7 +23,7 @@
               <finalName>currencyconverter</finalName>
               <transformers>
                 <transformer>
-                  <mainClass>com.rafellor.currencyconverter.cli.Main</mainClass>
+                  <mainClass>com.rafaellor.currencyconverter.cli.Main</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -52,6 +52,12 @@
           <groupId>org.junit.jupiter</groupId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.github.stefanbirkner</groupId>
+      <artifactId>system-lambda</artifactId>
+      <version>1.2.0</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
