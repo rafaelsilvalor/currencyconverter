@@ -1,5 +1,5 @@
 
-package com.rafellor.currencyconverter.cli;
+package com.rafaellor.currencyconverter.cli;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,10 +1,9 @@
-package com.rafellor.currencyconverter.cli;
+// src/main/java/com/rafaellor/currencyconverter/cli/Main.java
+package com.rafaellor.currencyconverter.cli;
 
-import com.rafellor.currencyconverter.infrastructure.history.ConversionHistoryManager;
-
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
@@ -13,32 +12,30 @@ import java.util.ResourceBundle;
 
 public class Main {
     public static void main(String[] args) {
-
-        File settingsFile = new File("settings/settings.properties");
+        // ─── 1) Load user settings ───────────────────────────────────────────────
+        Path settingsPath = Paths.get("settings/settings.properties");
         Properties settings = new Properties();
 
-        if (settingsFile.exists()) {
-            try (FileInputStream in = new FileInputStream(settingsFile)) {
+        if (Files.exists(settingsPath)) {
+            try (InputStream in = Files.newInputStream(settingsPath)) {
                 settings.load(in);
             } catch (IOException e) {
-                System.out.println("Warning: Failed to read settings. Using defaults.");
+                System.err.println("Warning: Failed to read settings. Using defaults.");
             }
         } else {
-            System.out.println("Warning: Settings file not found. Using defaults.");
+            System.err.println("Warning: Settings file not found. Using defaults.");
         }
 
-        String lang = settings.getProperty("language", "en");
-        String country = settings.getProperty("country", "US");
-        Locale locale = new Locale(lang, country);
+        // ─── 2) Initialize Locale & ResourceBundle ─────────────────────────────
+        String lang    = settings.getProperty("language", "en");
+        String country = settings.getProperty("country",  "US");
+        Locale locale  = new Locale(lang, country);
         ResourceBundle messages = ResourceBundle.getBundle("messages", locale);
 
-        // Instantiate history manager
-        Path historyPath = Paths.get("conversion-history.txt");
-        ConversionHistoryManager historyManager = new ConversionHistoryManager(historyPath);
+        // ─── 3) Instantiate dispatcher (auto‑discovers ALL handlers) ──────────
+        CommandLineDispatcher dispatcher = new CommandLineDispatcher(messages);
 
-
-        // Start the dispatcher
-        CommandLineDispatcher dispatcher = new CommandLineDispatcher(messages, historyManager);
+        // ─── 4) Hand off to the dispatcher ─────────────────────────────────────
         dispatcher.handle(args);
     }
 }

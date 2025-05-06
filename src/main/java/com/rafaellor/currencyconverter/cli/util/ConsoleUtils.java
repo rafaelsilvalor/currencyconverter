@@ -1,4 +1,4 @@
-package com.rafellor.currencyconverter.cli.util;
+package com.rafaellor.currencyconverter.cli.util;
 
 import java.io.IOException;
 import java.util.Scanner;

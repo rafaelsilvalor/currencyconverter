@@ -1,7 +1,7 @@
-package com.rafellor.currencyconverter.application;
+package com.rafaellor.currencyconverter.application;
 
-import com.rafellor.currencyconverter.domain.ExchangeRateService;
-import com.rafellor.currencyconverter.infrastructure.api.ExchangeRateClient;
+import com.rafaellor.currencyconverter.domain.ExchangeRateService;
+import com.rafaellor.currencyconverter.infrastructure.api.ExchangeRateClient;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

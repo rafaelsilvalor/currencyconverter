@@ -1,9 +1,12 @@
-package com.rafellor.currencyconverter.cli;
+package com.rafaellor.currencyconverter.cli;
 
-import com.rafellor.currencyconverter.infrastructure.config.ConfigLoader;
+import com.rafaellor.currencyconverter.infrastructure.config.ConfigLoader;
 
-public class CliConfig {
-    private CliConfig(){}
+/**
+ * Central CLI configuration. Reads system override, then application/config, with fallback.
+ */
+public final class CliConfig {
+    private CliConfig() { }
 
     public static final String COMMAND =
             System.getProperty(

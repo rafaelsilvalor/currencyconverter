@@ -1,4 +1,4 @@
-package com.rafellor.currencyconverter.infrastructure.config;
+package com.rafaellor.currencyconverter.infrastructure.config;
 
 import java.io.IOException;
 import java.io.InputStream;

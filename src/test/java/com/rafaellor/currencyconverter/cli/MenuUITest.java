@@ -1,14 +1,9 @@
-package com.rafellor.currencyconverter.cli;
+package com.rafaellor.currencyconverter.cli;
 
-import com.rafellor.currencyconverter.application.CurrencyConverter;
-import com.rafellor.currencyconverter.domain.ExchangeRateService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;

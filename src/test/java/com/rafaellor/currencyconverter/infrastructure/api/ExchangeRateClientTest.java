@@ -1,6 +1,6 @@
-package com.rafellor.currencyconverter.infrastructure.api;
+package com.rafaellor.currencyconverter.infrastructure.api;
 
-import com.rafellor.currencyconverter.infrastructure.config.ConfigLoader;
+import com.rafaellor.currencyconverter.infrastructure.config.ConfigLoader;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

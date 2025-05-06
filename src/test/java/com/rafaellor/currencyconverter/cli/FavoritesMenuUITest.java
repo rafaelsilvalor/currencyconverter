@@ -1,17 +1,10 @@
-package com.rafellor.currencyconverter.cli;
+package com.rafaellor.currencyconverter.cli;
 
-import com.rafellor.currencyconverter.application.CurrencyConverter;
-import com.rafellor.currencyconverter.domain.ExchangeRateService;
-import com.rafellor.currencyconverter.domain.Favorite;
-import com.rafellor.currencyconverter.infrastructure.favorites.FavoritesManager;
+import com.rafaellor.currencyconverter.infrastructure.favorites.FavoritesManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import java.io.*;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

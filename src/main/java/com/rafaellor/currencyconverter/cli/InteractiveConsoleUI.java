@@ -1,6 +1,6 @@
-package com.rafellor.currencyconverter.cli;
+package com.rafaellor.currencyconverter.cli;
 
-import com.rafellor.currencyconverter.application.CurrencyConverter;
+import com.rafaellor.currencyconverter.application.CurrencyConverter;
 
 import java.util.ResourceBundle;
 import java.util.Scanner;

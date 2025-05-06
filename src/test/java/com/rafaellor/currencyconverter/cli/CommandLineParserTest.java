@@ -1,7 +1,6 @@
-package com.rafellor.currencyconverter.cli;
+package com.rafaellor.currencyconverter.cli;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -11,7 +10,7 @@ public class CommandLineParserTest {
 
     @Test
     void shouldParseValidCurrencyCommand(){
-        String[] args = {"cvc", "usd", "brl", "50.0"};
+        String[] args = {"cvc","--oneline", "usd", "brl", "50.0"};
         CommandLineParser.Command command = CommandLineParser.parse(args);
 
 
@@ -22,7 +21,7 @@ public class CommandLineParserTest {
 
     @Test
     void shouldThrowOnInvalidCommandFormat() {
-        String[] args = {"cvc", "usd", "brl"};
+        String[] args = {"cvc","--oneline", "usd", "brl"};
         assertThrows(IllegalArgumentException.class, () -> CommandLineParser.parse(args));
     }
 }

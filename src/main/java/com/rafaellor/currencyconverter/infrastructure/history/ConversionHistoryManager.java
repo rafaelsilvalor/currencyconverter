@@ -1,6 +1,6 @@
-package com.rafellor.currencyconverter.infrastructure.history;
+package com.rafaellor.currencyconverter.infrastructure.history;
 
-import com.rafellor.currencyconverter.domain.ConversionRecord;
+import com.rafaellor.currencyconverter.domain.ConversionRecord;
 
 import java.io.IOException;
 import java.nio.file.Files;

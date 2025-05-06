@@ -1,9 +1,9 @@
-package com.rafellor.currencyconverter.infrastructure.api;
+package com.rafaellor.currencyconverter.infrastructure.api;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.rafellor.currencyconverter.domain.ExchangeRateService;
-import com.rafellor.currencyconverter.infrastructure.config.ConfigLoader;
+import com.rafaellor.currencyconverter.domain.ExchangeRateService;
+import com.rafaellor.currencyconverter.infrastructure.config.ConfigLoader;
 
 import java.io.IOException;
 import java.net.URI;

@@ -1,6 +1,6 @@
-package com.rafellor.currencyconverter.infrastructure.favorites;
+package com.rafaellor.currencyconverter.infrastructure.favorites;
 
-import com.rafellor.currencyconverter.domain.Favorite;
+import com.rafaellor.currencyconverter.domain.Favorite;
 import org.junit.jupiter.api.*;
 
 import java.io.File;

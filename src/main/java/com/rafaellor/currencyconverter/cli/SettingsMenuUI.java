@@ -1,4 +1,4 @@
-package com.rafellor.currencyconverter.cli;
+package com.rafaellor.currencyconverter.cli;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 
-import static com.rafellor.currencyconverter.cli.util.ConsoleUtils.clearConsole;
-import static com.rafellor.currencyconverter.cli.util.ConsoleUtils.waitForUser;
+import static com.rafaellor.currencyconverter.cli.util.ConsoleUtils.clearConsole;
+import static com.rafaellor.currencyconverter.cli.util.ConsoleUtils.waitForUser;
 
 public class SettingsMenuUI {
     private final Scanner scanner = new Scanner(System.in);

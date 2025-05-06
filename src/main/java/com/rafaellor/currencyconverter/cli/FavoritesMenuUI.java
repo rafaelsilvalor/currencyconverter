@@ -1,19 +1,19 @@
-package com.rafellor.currencyconverter.cli;
+package com.rafaellor.currencyconverter.cli;
 
-import com.rafellor.currencyconverter.application.CurrencyConverter;
-import com.rafellor.currencyconverter.cli.util.ConversionHandler;
-import com.rafellor.currencyconverter.domain.Favorite;
-import com.rafellor.currencyconverter.domain.ExchangeRateService;
-import com.rafellor.currencyconverter.infrastructure.favorites.FavoritesManager;
-import com.rafellor.currencyconverter.infrastructure.history.ConversionHistoryManager;
+import com.rafaellor.currencyconverter.application.CurrencyConverter;
+import com.rafaellor.currencyconverter.cli.util.ConversionHandler;
+import com.rafaellor.currencyconverter.domain.Favorite;
+import com.rafaellor.currencyconverter.domain.ExchangeRateService;
+import com.rafaellor.currencyconverter.infrastructure.favorites.FavoritesManager;
+import com.rafaellor.currencyconverter.infrastructure.history.ConversionHistoryManager;
 
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
-import static com.rafellor.currencyconverter.cli.util.ConsoleUtils.clearConsole;
-import static com.rafellor.currencyconverter.cli.util.ConsoleUtils.waitForUser;
+import static com.rafaellor.currencyconverter.cli.util.ConsoleUtils.clearConsole;
+import static com.rafaellor.currencyconverter.cli.util.ConsoleUtils.waitForUser;
 
 public class FavoritesMenuUI {
     private final Scanner scanner = new Scanner(System.in);

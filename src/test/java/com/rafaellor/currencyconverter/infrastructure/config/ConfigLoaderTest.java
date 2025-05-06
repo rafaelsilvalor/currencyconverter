@@ -1,4 +1,4 @@
-package com.rafellor.currencyconverter.infrastructure.config;
+package com.rafaellor.currencyconverter.infrastructure.config;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

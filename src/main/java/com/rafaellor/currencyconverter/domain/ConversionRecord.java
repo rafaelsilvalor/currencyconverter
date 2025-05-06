@@ -1,4 +1,4 @@
-package com.rafellor.currencyconverter.domain;
+package com.rafaellor.currencyconverter.domain;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

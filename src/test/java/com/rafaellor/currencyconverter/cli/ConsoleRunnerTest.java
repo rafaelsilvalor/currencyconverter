@@ -1,7 +1,7 @@
-package com.rafellor.currencyconverter.cli;
+package com.rafaellor.currencyconverter.cli;
 
-import com.rafellor.currencyconverter.application.CurrencyConverter;
-import com.rafellor.currencyconverter.domain.ExchangeRateService;
+import com.rafaellor.currencyconverter.application.CurrencyConverter;
+import com.rafaellor.currencyconverter.domain.ExchangeRateService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

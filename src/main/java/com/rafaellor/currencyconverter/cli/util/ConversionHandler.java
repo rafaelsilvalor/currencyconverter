@@ -1,8 +1,8 @@
-package com.rafellor.currencyconverter.cli.util;
+package com.rafaellor.currencyconverter.cli.util;
 
-import com.rafellor.currencyconverter.application.CurrencyConverter;
-import com.rafellor.currencyconverter.domain.ConversionRecord;
-import com.rafellor.currencyconverter.infrastructure.history.ConversionHistoryManager;
+import com.rafaellor.currencyconverter.application.CurrencyConverter;
+import com.rafaellor.currencyconverter.domain.ConversionRecord;
+import com.rafaellor.currencyconverter.infrastructure.history.ConversionHistoryManager;
 
 import java.io.IOException;
 import java.math.BigDecimal;

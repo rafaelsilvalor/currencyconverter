@@ -1,6 +1,6 @@
-package com.rafellor.currencyconverter.application;
+package com.rafaellor.currencyconverter.application;
 
-import com.rafellor.currencyconverter.domain.ExchangeRateService;
+import com.rafaellor.currencyconverter.domain.ExchangeRateService;
 
 public class CurrencyConverter {
     private final ExchangeRateService service;
