@@ -1,50 +1,64 @@
-// src/test/java/com/rafellor/currencyconverter/cli/CommandLineDispatcherTest.java
-//package com.rafaellor.currencyconverter.cli;
-//
-//import com.rafellor.currencyconverter.cli.handlers.CommandHandler;
-//import com.rafellor.currencyconverter.cli.handlers.ListHandler;
-//import org.junit.jupiter.api.Test;
-//
-//import java.io.ByteArrayOutputStream;
-//import java.io.PrintStream;
-//import java.util.List;
-//import java.util.ResourceBundle;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//class CommandLineDispatcherTest {
-//    private final ResourceBundle messages = ResourceBundle.getBundle("messages_en_US");
-//
-//    @Test
-//    void dispatchesToFirstMatchingHandler() {
-//        // fake handler that never matches
-//        CommandHandler skip = (args) -> false;
-//        // fake handler that handles "foo"
-//        CommandHandler fooHandler = new CommandHandler() {
-//            @Override public boolean matches(String[] args) { return args.length==1 && args[0].equals("foo"); }
-//            @Override public void execute(String[] args) { System.out.print("HANDLED"); }
-//        };
-//
-//        CommandLineDispatcher disp =
-//                new CommandLineDispatcher(messages, List.of(skip, fooHandler));
-//
-//        ByteArrayOutputStream out = new ByteArrayOutputStream();
-//        System.setOut(new PrintStream(out));
-//        disp.handle(new String[]{"foo"});
-//        System.setOut(System.out);
-//
-//        assertEquals("HANDLED", out.toString());
-//    }
-//
-//    @Test
-//    void printsErrorWhenNoHandlerMatches() {
-//        CommandLineDispatcher disp = new CommandLineDispatcher(messages, List.of());
-//        ByteArrayOutputStream out = new ByteArrayOutputStream();
-//        System.setOut(new PrintStream(out));
-//
-//        disp.handle(new String[]{"anything"});
-//
-//        System.setOut(System.out);
-//        assertTrue(out.toString().contains(messages.getString("error.invalid.commandline")));
-//    }
-//}
+package com.rafaellor.currencyconverter.cli;
+
+import com.rafaellor.currencyconverter.cli.handlers.CommandHandler;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import static com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOut;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+
+class CommandLineDispatcherTest {
+
+    private CommandLineDispatcher dispatcher;
+    private CommandHandler mockHandler;
+    private ResourceBundle messages;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        // Create a mock ResourceBundle
+        messages = Mockito.mock(ResourceBundle.class);
+        dispatcher = new CommandLineDispatcher(messages);
+
+        // Use reflection to inject our mock handler into the private handlers list
+        Field handlersField = CommandLineDispatcher.class.getDeclaredField("handlers");
+        handlersField.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        List<CommandHandler> handlers = (List<CommandHandler>) handlersField.get(dispatcher);
+
+        mockHandler = Mockito.mock(CommandHandler.class);
+        handlers.add(mockHandler);
+    }
+
+    /**
+     * If a handler.matches(...) returns true, handle(...) should invoke its execute(...) once.
+     */
+    @Test
+    void handle_matchingHandler_executes() {
+        String[] args = {"convert", "USD", "BRL", "100"};
+        Mockito.when(mockHandler.matches(args)).thenReturn(true);
+
+        dispatcher.handle(args);
+
+        verify(mockHandler).execute(args);
+    }
+
+    /**
+     * If no handler matches, handle(...) should print the "error.invalid.commandline" message.
+     */
+    @Test
+    void handle_nonMatching_showsError() throws Exception {
+        String[] args = {"unknown"};
+        Mockito.when(mockHandler.matches(args)).thenReturn(false);
+        Mockito.when(messages.getString("error.invalid.commandline")).thenReturn("Invalid command");
+
+        String output = tapSystemOut(() -> dispatcher.handle(args));
+
+        assertTrue(output.contains("Invalid command"));
+    }
+}
