@@ -6,6 +6,7 @@ import com.rafaellor.currencyconverter.cli.MenuUI;
 import com.rafaellor.currencyconverter.domain.ExchangeRateService;
 import com.rafaellor.currencyconverter.infrastructure.api.ExchangeRateClient;
 import com.rafaellor.currencyconverter.infrastructure.config.ConfigLoader;
+import com.rafaellor.currencyconverter.infrastructure.config.PathsConfig;
 import com.rafaellor.currencyconverter.infrastructure.history.ConversionHistoryManager;
 
 import java.nio.file.Paths;
@@ -29,8 +30,10 @@ public class MenuHandler implements CommandHandler {
         this.service = new ExchangeRateClient(config);
         this.converter = new CurrencyConverter(service);
 
+        String historyPath = PathsConfig.getInstance().get("conversion.history");
         // uses the same history file path as Main
-        this.historyManager = new ConversionHistoryManager(Paths.get("conversion-history.txt"));
+//        this.historyManager = new ConversionHistoryManager(Paths.get("conversion-history.txt"));
+        this.historyManager = new ConversionHistoryManager(Paths.get(historyPath));
     }
 
     @Override

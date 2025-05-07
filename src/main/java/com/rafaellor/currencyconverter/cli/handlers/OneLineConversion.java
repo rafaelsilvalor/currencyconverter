@@ -6,6 +6,7 @@ import com.rafaellor.currencyconverter.cli.CommandLineParser;
 import com.rafaellor.currencyconverter.cli.util.ConversionHandler;
 import com.rafaellor.currencyconverter.infrastructure.api.ExchangeRateClient;
 import com.rafaellor.currencyconverter.infrastructure.config.ConfigLoader;
+import com.rafaellor.currencyconverter.infrastructure.config.PathsConfig;
 import com.rafaellor.currencyconverter.infrastructure.history.ConversionHistoryManager;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -20,7 +21,9 @@ public class OneLineConversion implements CommandHandler {
         this.messages = messages;
         ConfigLoader config = new ConfigLoader();
         this.converter = new CurrencyConverter(new ExchangeRateClient(config));
-        this.historyManager = new ConversionHistoryManager(Paths.get("conversion-history.txt"));
+//        this.historyManager = new ConversionHistoryManager(Paths.get("conversion-history.txt"));
+        String historyPath = PathsConfig.getInstance().get("conversion.history");
+        this.historyManager = new ConversionHistoryManager(Paths.get(historyPath));
     }
 
     @Override

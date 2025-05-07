@@ -4,6 +4,7 @@ import com.rafaellor.currencyconverter.application.CurrencyConverter;
 import com.rafaellor.currencyconverter.cli.util.ConversionHandler;
 import com.rafaellor.currencyconverter.cli.util.HistoryUtils;
 import com.rafaellor.currencyconverter.domain.ExchangeRateService;
+import com.rafaellor.currencyconverter.infrastructure.config.PathsConfig;
 import com.rafaellor.currencyconverter.infrastructure.favorites.FavoritesManager;
 import com.rafaellor.currencyconverter.infrastructure.history.ConversionHistoryManager;
 
@@ -20,7 +21,12 @@ public class MenuUI {
     private final ResourceBundle messages;
     private final ConversionHistoryManager historyManager;
 
-    public MenuUI(CurrencyConverter converter, ExchangeRateService client, ResourceBundle messages, ConversionHistoryManager historyManager) {
+    public MenuUI(
+            CurrencyConverter converter,
+            ExchangeRateService client,
+            ResourceBundle messages,
+            ConversionHistoryManager historyManager
+    ) {
         this.converter = converter;
         this.client = client;
         this.messages = messages;
@@ -54,13 +60,16 @@ public class MenuUI {
         System.out.println("3) " + messages.getString("menu.recentlyConverted"));
         System.out.println("4) " + messages.getString("menu.list"));
         System.out.println("5) " + messages.getString("menu.settings"));
-        System.out.println("0) " + messages.getString("menu.exit")+"\n");
+        System.out.println("0) " + messages.getString("menu.exit") + "\n");
         System.out.print(messages.getString("menu.prompt") + " ");
     }
 
     private void openFavoritesMenu() {
-        FavoritesManager favoritesManager = new FavoritesManager("favorites.properties");
-        FavoritesMenuUI favoritesMenuUI = new FavoritesMenuUI(converter, client, favoritesManager,historyManager, messages);
+        // Load the favorites file path from settings
+        String favFilePath = PathsConfig.getInstance().get("favorites.file");
+        FavoritesManager favoritesManager = new FavoritesManager(favFilePath);
+        FavoritesMenuUI favoritesMenuUI =
+                new FavoritesMenuUI(converter, client, favoritesManager, historyManager, messages);
         clearConsole();
         favoritesMenuUI.start();
     }
@@ -68,11 +77,11 @@ public class MenuUI {
     private void handleConversion() {
         clearConsole();
         System.out.println("\n==== " + messages.getString("menu.title") + " ====\n");
-        System.out.print(messages.getString("prompt.amount")+" ");
+        System.out.print(messages.getString("prompt.amount") + " ");
         double amount = Double.parseDouble(scanner.nextLine());
-        System.out.print(messages.getString("prompt.from")+" ");
+        System.out.print(messages.getString("prompt.from") + " ");
         String from = scanner.nextLine().toUpperCase();
-        System.out.print(messages.getString("prompt.to")+" ");
+        System.out.print(messages.getString("prompt.to") + " ");
         String to = scanner.nextLine().toUpperCase();
         System.out.println();
 
@@ -110,7 +119,6 @@ public class MenuUI {
         HistoryUtils.showHistory(historyManager, messages, 10);
 
         System.out.println();
-
         waitForUser(messages.getString("prompt.continue") + " ");
     }
 }
