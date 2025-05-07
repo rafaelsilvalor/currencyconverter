@@ -25,7 +25,7 @@ class CommandLineDispatcherTest {
         messages = Mockito.mock(ResourceBundle.class);
         dispatcher = new CommandLineDispatcher(messages);
 
-        // Use reflection to inject our mock handler into the private handlers list
+        // Inject mock handler into the private handlers list
         Field handlersField = CommandLineDispatcher.class.getDeclaredField("handlers");
         handlersField.setAccessible(true);
         @SuppressWarnings("unchecked")
@@ -35,9 +35,6 @@ class CommandLineDispatcherTest {
         handlers.add(mockHandler);
     }
 
-    /**
-     * If a handler.matches(...) returns true, handle(...) should invoke its execute(...) once.
-     */
     @Test
     void handle_matchingHandler_executes() {
         String[] args = {"convert", "USD", "BRL", "100"};
@@ -48,9 +45,6 @@ class CommandLineDispatcherTest {
         verify(mockHandler).execute(args);
     }
 
-    /**
-     * If no handler matches, handle(...) should print the "error.invalid.commandline" message.
-     */
     @Test
     void handle_nonMatching_showsError() throws Exception {
         String[] args = {"unknown"};
