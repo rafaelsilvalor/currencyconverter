@@ -1,7 +1,6 @@
-package com.rafaellor.currencyconverter.cli.handlers;
+package com.rafaellor.currencyconverter.cli.util;
 
 import com.rafaellor.currencyconverter.application.CurrencyConverter;
-import com.rafaellor.currencyconverter.cli.util.ConversionHandler;
 import com.rafaellor.currencyconverter.domain.ConversionRecord;
 import com.rafaellor.currencyconverter.infrastructure.history.ConversionHistoryManager;
 import org.junit.jupiter.api.Test;
