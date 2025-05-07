@@ -1,42 +1,41 @@
-// src/main/java/com/rafellor/currencyconverter/cli/handlers/ListHandler.java
-//package com.rafaellor.currencyconverter.cli.handlers;
-//
-//import com.rafaellor.currencyconverter.cli.CliConfig;
-//import com.rafaellor.currencyconverter.domain.ExchangeRateService;
-//import com.rafaellor.currencyconverter.infrastructure.api.ExchangeRateClient;
-//import com.rafaellor.currencyconverter.infrastructure.config.ConfigLoader;
-//
-//import java.util.ResourceBundle;
-//
-//public class ListHandler implements CommandHandler {
-//    private final ConfigLoader config = new ConfigLoader();
-//    private final ExchangeRateService service;
-//    private final ResourceBundle messages;
-//
-//    /** Production ctor: wires up real service. */
-//    public ListHandler(ResourceBundle messages) {
-//        this(
-//                new ExchangeRateClient(config),
-//                messages
-//        );
-//    }
-//
-//    /** Test ctor: let tests supply a stub service. */
-//    public ListHandler(ExchangeRateService service, ResourceBundle messages) {
-//        this.service  = service;
-//        this.messages = messages;
-//    }
-//
-//    @Override
-//    public boolean matches(String[] args) {
-//        return args.length == 2
-//                && args[0].equalsIgnoreCase(CliConfig.COMMAND)
-//                && args[1].equalsIgnoreCase("--list");
-//    }
-//
-//    @Override
-//    public void execute(String[] args) {
-//        System.out.println(messages.getString("favorites.title"));
-//        service.getSupportedCodes().forEach(System.out::println);
-//    }
-//}
+package com.rafaellor.currencyconverter.cli.handlers;
+
+import com.rafaellor.currencyconverter.cli.CliConfig;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import java.util.ListResourceBundle;
+import java.util.ResourceBundle;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class ListHandlerTest {
+    private ListHandler handler;
+
+    @BeforeEach
+    void setUp() {
+        ResourceBundle messages = new ListResourceBundle() {
+            @Override
+            protected Object[][] getContents() {
+                return new Object[][]{{"menu.list", "Supported currencies:"}, {"menu.empty", "No currencies available."}};
+            }
+        };
+        handler = new ListHandler(messages);
+    }
+
+    @Test
+    @DisplayName("matches() returns true on 'cvc --list'")
+    void testMatchesListFlag() {
+        String[] args = { CliConfig.COMMAND, "--list" };
+        assertTrue(handler.matches(args));
+    }
+
+    @Test
+    @DisplayName("execute() prints all supported codes")
+    void testExecutePrintsSupportedCodes() {
+        // TODO: stub service.getSupportedCodes() to return e.g. ["USD","EUR"],
+        // capture System.out, call handler.execute(new String[]{CliConfig.COMMAND, "--list"}),
+        // and assert that header + each code is printed.
+    }
+}
