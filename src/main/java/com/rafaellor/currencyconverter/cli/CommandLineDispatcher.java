@@ -2,36 +2,69 @@ package com.rafaellor.currencyconverter.cli;
 
 import com.rafaellor.currencyconverter.cli.handlers.CommandHandler;
 import org.reflections.Reflections;
+
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
 
+/**
+ * Discovers and dispatches CLI command handlers.
+ */
 public class CommandLineDispatcher {
     private final List<CommandHandler> handlers = new ArrayList<>();
     private final ResourceBundle messages;
 
     public CommandLineDispatcher(ResourceBundle messages) {
         this.messages = messages;
-        Reflections reflections = new Reflections(
-                "com.rafaellor.currencyconverter.cli.handlers"
-        );
-        Set<Class<? extends CommandHandler>> classes = reflections.getSubTypesOf(CommandHandler.class);
-        for (Class<? extends CommandHandler> cls : classes) {
+
+        // Scan for all CommandHandler implementations
+        Reflections reflections = new Reflections("com.rafaellor.currencyconverter.cli.handlers");
+        for (Class<? extends CommandHandler> handlerClass
+                : reflections.getSubTypesOf(CommandHandler.class)) {
+
+            CommandHandler handlerInstance;
+            // 1) Try constructor(ResourceBundle)
             try {
-                Constructor<? extends CommandHandler> ctor = cls.getDeclaredConstructor(ResourceBundle.class);
-                handlers.add(ctor.newInstance(messages));
-            } catch (Exception ex) {
-                throw new RuntimeException("Failed to load handler class " + cls.getName(), ex);
+                Constructor<? extends CommandHandler> rbCtor =
+                        handlerClass.getConstructor(ResourceBundle.class);
+                handlerInstance = rbCtor.newInstance(messages);
+
+            } catch (NoSuchMethodException e1) {
+                // 2) Fallback to no-arg constructor
+                try {
+                    Constructor<? extends CommandHandler> noArgCtor =
+                            handlerClass.getConstructor();
+                    handlerInstance = noArgCtor.newInstance();
+
+                } catch (NoSuchMethodException
+                         | InstantiationException
+                         | IllegalAccessException
+                         | InvocationTargetException e2) {
+                    throw new RuntimeException(
+                            "Cannot instantiate handler " + handlerClass.getName(), e2);
+                }
+
+            } catch (InstantiationException
+                     | IllegalAccessException
+                     | InvocationTargetException e) {
+                throw new RuntimeException(
+                        "Failed to construct handler " + handlerClass.getName(), e);
             }
+
+            handlers.add(handlerInstance);
         }
     }
 
+    /**
+     * Finds the first handler whose matches(...) returns true, and invokes execute(...).
+     * If none match, prints an error message.
+     */
     public void handle(String[] args) {
-        for (CommandHandler h : handlers) {
-            if (h.matches(args)) {
-                h.execute(args);
+        for (CommandHandler handler : handlers) {
+            if (handler.matches(args)) {
+                handler.execute(args);
                 return;
             }
         }
