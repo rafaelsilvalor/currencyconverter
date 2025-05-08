@@ -1,5 +1,7 @@
 package com.rafaellor.currencyconverter.cli;
 
+import com.rafaellor.currencyconverter.infrastructure.config.FolderInitializer;
+import com.rafaellor.currencyconverter.infrastructure.config.ResourceExtractor;
 import com.rafaellor.currencyconverter.infrastructure.config.PathsConfig;
 
 import java.io.IOException;
@@ -13,6 +15,15 @@ import java.util.ResourceBundle;
 
 public class Main {
     public static void main(String[] args) {
+        // Step 3: Ensure external folders and default resources
+        try {
+            FolderInitializer.initialize();
+            ResourceExtractor.extractDefaults();
+        } catch (RuntimeException e) {
+            System.err.println("Error during initial setup: " + e.getMessage());
+            // Proceeding with startup even if setup fails
+        }
+
         // Determine settings file location, with fallback if not configured
         String settingsFilePath;
         try {
