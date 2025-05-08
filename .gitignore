@@ -38,6 +38,4 @@ build/
 .DS_Store
 
 ### My Files ###
-settings/settings.properties
-estrutura.txt
-settings/conversion-history.txt
+settings/
