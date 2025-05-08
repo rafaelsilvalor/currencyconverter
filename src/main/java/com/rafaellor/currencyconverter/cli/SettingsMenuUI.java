@@ -1,5 +1,6 @@
 package com.rafaellor.currencyconverter.cli;
 
+import com.rafaellor.currencyconverter.infrastructure.config.PathsConfig;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,12 +13,14 @@ import static com.rafaellor.currencyconverter.cli.util.ConsoleUtils.waitForUser;
 public class SettingsMenuUI {
     private final Scanner scanner = new Scanner(System.in);
     private final Properties settings;
-    private final String settingsFile = "settings/settings.properties";
+    private final String settingsFile;
     private final ResourceBundle messages;
 
     public SettingsMenuUI(Properties settings, ResourceBundle messages) {
         this.settings = settings;
         this.messages = messages;
+        // load the path to settings file from PathsConfig
+        this.settingsFile = PathsConfig.getInstance().get("language.settings.file");
     }
 
     public void start() {
@@ -74,7 +77,7 @@ public class SettingsMenuUI {
         try {
             File file = new File(settingsFile);
 
-            // Ensure the 'settings' folder exists
+            // Ensure the parent folder exists
             file.getParentFile().mkdirs();
 
             try (OutputStream out = new FileOutputStream(file)) {
@@ -86,5 +89,6 @@ public class SettingsMenuUI {
         } catch (IOException e) {
             System.out.println(messages.getString("settings.language.error") + ": " + e.getMessage());
         }
+        waitForUser(messages.getString("prompt.continue"));
     }
 }

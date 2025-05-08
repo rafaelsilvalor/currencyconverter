@@ -3,9 +3,18 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.rafellor</groupId>
   <artifactId>currencyconverter</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <name>currencyconverter</name>
+  <version>0.1.0-alpha</version>
+  <description>CLI currency converter application</description>
   <build>
     <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
+        <configuration>
+          <release>21</release>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0</version>
@@ -49,8 +58,23 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <tagNameFormat>v@{project.version}</tagNameFormat>
+          <releaseProfiles>${release.profile}</releaseProfiles>
+          <preparationGoals>clean verify</preparationGoals>
+          <goals>deploy</goals>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>release</id>
+    </profile>
+  </profiles>
   <dependencies>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -115,5 +139,6 @@
     <maven.compiler.target>21</maven.compiler.target>
     <maven.compiler.source>21</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <release.profile>release</release.profile>
   </properties>
 </project>

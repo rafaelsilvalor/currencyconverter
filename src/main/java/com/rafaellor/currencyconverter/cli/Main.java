@@ -1,5 +1,7 @@
 package com.rafaellor.currencyconverter.cli;
 
+import com.rafaellor.currencyconverter.infrastructure.config.PathsConfig;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -11,8 +13,16 @@ import java.util.ResourceBundle;
 
 public class Main {
     public static void main(String[] args) {
-        // Load user settings
-        Path settingsPath = Paths.get("settings/settings.properties");
+        // Determine settings file location, with fallback if not configured
+        String settingsFilePath;
+        try {
+            settingsFilePath = PathsConfig.getInstance().get("language.settings.file");
+        } catch (IllegalArgumentException e) {
+            // key missing → fall back to default location
+            settingsFilePath = "settings/settings.properties";
+        }
+
+        Path settingsPath = Paths.get(settingsFilePath);
         Properties settings = new Properties();
 
         if (Files.exists(settingsPath)) {
@@ -31,10 +41,10 @@ public class Main {
         Locale locale  = new Locale(lang, country);
         ResourceBundle messages = ResourceBundle.getBundle("messages", locale);
 
-        // Instantiate dispatcher (auto‑discovers ALL handlers) ──────────
+        // Instantiate dispatcher (auto-discovers ALL handlers)
         CommandLineDispatcher dispatcher = new CommandLineDispatcher(messages);
 
-        //  Hand off to the dispatcher
+        // Hand off to the dispatcher
         dispatcher.handle(args);
     }
 }

@@ -41,3 +41,4 @@ build/
 settings/settings.properties
 estrutura.txt
 settings/conversion-history.txt
+settings/language/language.properties
