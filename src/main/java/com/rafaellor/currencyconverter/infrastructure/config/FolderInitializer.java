@@ -3,44 +3,47 @@ package com.rafaellor.currencyconverter.infrastructure.config;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * Ensures that external configuration directories exist next to the application JAR.
+ * Uses a guard-clause / fail-first style to avoid else statements.
  */
 public class FolderInitializer {
 
     /**
-     * Initializes the standard folders (`settings` and `data`) in the current working directory.
+     * Initializes the standard folders (`settings`, `data`, and `scripts`) in the current working directory.
      */
     public static void initialize() {
-        initialize(Paths.get("").toAbsolutePath());
+        initialize(Path.of(".").toAbsolutePath());
     }
 
     /**
-     * Initializes the standard folders (`settings` and `data`) under the given base directory.
+     * Initializes the standard folders under the given base directory.
+     * Uses early continues to simplify logic.
      *
      * @param baseDir the root directory under which the folders will be created
      */
     public static void initialize(Path baseDir) {
-        Path settingsDir = baseDir.resolve("settings");
-        Path dataDir = baseDir.resolve("data");
-        Path scriptsDir = baseDir.resolve("scripts");
-        try {
-            if (Files.notExists(settingsDir)) {
-                Files.createDirectories(settingsDir);
-                System.out.println("[INIT] Created settings directory: " + settingsDir);
+        List<Path> dirs = List.of(
+                baseDir.resolve("settings"),
+                baseDir.resolve("data"),
+                baseDir.resolve("scripts")
+        );
+
+        for (Path dir : dirs) {
+            try {
+                if (Files.exists(dir)) {
+                    System.out.println("⚙️  [INIT] Directory already exists: " + dir);
+                    continue;
+                }
+                Files.createDirectories(dir);
+                System.out.println("✅ [INIT] Created directory: " + dir);
+            } catch (IOException e) {
+                System.err.println("❌ [INIT] Failed to create " + dir + ": " + e.getMessage());
+                throw new RuntimeException(e);
             }
-            if (Files.notExists(dataDir)) {
-                Files.createDirectories(dataDir);
-                System.out.println("[INIT] Created data directory: " + dataDir);
-            }
-            if (Files.notExists(scriptsDir)) {
-                Files.createDirectories(scriptsDir);
-                System.out.println("[INIT] Created scripts directory: " + scriptsDir);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to initialize folders", e);
         }
     }
 }
+

@@ -36,22 +36,31 @@ public class ResourceExtractor {
      */
     public static void extractDefaults(Path baseDir) {
         Path settingsDir = baseDir.resolve("settings");
-        try {
-            for (String resourceName : DEFAULT_RESOURCES) {
-                Path target = settingsDir.resolve(resourceName);
-                if (Files.notExists(target)) {
-                    try (InputStream in = ResourceExtractor.class.getClassLoader().getResourceAsStream(resourceName)) {
-                        if (in == null) {
-                            System.err.println("[INIT] Resource not found in classpath: " + resourceName);
-                            continue;
-                        }
-                        Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
-                        System.out.println("[INIT] Extracted default resource: " + resourceName + " to " + target);
-                    }
-                }
+
+        for (String resourceName : DEFAULT_RESOURCES) {
+            Path target = settingsDir.resolve(resourceName);
+
+            if (Files.exists(target)) {
+                System.out.println("⚙️  [INIT] Resource already exists, skipping: " + resourceName);
+                continue;
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to extract default resources", e);
+
+            try (InputStream in = ResourceExtractor
+                    .class
+                    .getClassLoader()
+                    .getResourceAsStream(resourceName))
+            {
+                if (in == null) {
+                    System.err.println("⚠️  [INIT] Default resource missing in JAR: " + resourceName);
+                    continue;
+                }
+                Files.copy(in, target);
+                System.out.println("✅ [INIT] Extracted default resource: " + resourceName);
+
+            } catch (IOException e) {
+                System.err.println("❌ [INIT] Failed to extract " + resourceName + ": " + e.getMessage());
+                throw new RuntimeException(e);
+            }
         }
     }
 }
