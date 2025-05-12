@@ -1,5 +1,7 @@
 ## About
 
+### English
+
 🚀 **My Journey with Oracle Next Education (ONE)**
 I’m proud to be part of the 100% online and free Oracle Next Education (ONE) program, a partnership between Alura and Oracle. This course has empowered me to solidify and expand my programming knowledge—complementing my Systems Analysis and Development studies—by tackling hands-on challenges that mirror real-world scenarios. Even when revisiting familiar topics, ONE continually deepens my understanding and prepares me for the tech job market.
 
@@ -11,7 +13,24 @@ This repository houses my Java-based Currency Converter CLI, built as a capstone
 * View a history of past conversions
 * Switch languages at runtime using internationalized `.properties` bundles
 
-Each feature follows SOLID design principles and TDD best practices, offering a robust, extensible foundation for future enhancements—whether that’s a graphical overlay UI, web-API integration, or Dockerization.
+Each feature follows SOLID design principles and TDD best practices, offering a robust, extensible foundation for future enhancements—whether that’s a graphical overlay UI, web-API integration.
+
+### Português (Brasil)
+
+🚀 **Minha Jornada com a Oracle Next Education (ONE)**
+Tenho orgulho de fazer parte do programa 100% online e gratuito Oracle Next Education (ONE), uma parceria entre a Alura e a Oracle. Este curso me capacitou a consolidar e expandir meu conhecimento em programação—complementando meus estudos em Análise e Desenvolvimento de Sistemas—por meio de desafios práticos que refletem cenários do mundo real. Mesmo ao revisitar tópicos familiares, o ONE aprofunda continuamente meu entendimento e me prepara para o mercado de tecnologia.
+
+💻 **Sobre Este Projeto**
+Este repositório contém meu CLI de Conversor de Moedas em Java, desenvolvido como desafio final para o ONE. Utilizando a Exchange Rate API e bibliotecas otimizadas como Gson e Reflections, a aplicação apresenta um menu interativo no terminal que permite:
+
+* Converter entre quaisquer duas moedas em um único comando ou por meio de um prompt intuitivo
+* Salvar e paginar pares de moedas favoritos
+* Visualizar o histórico de conversões realizadas
+* Alternar idiomas em tempo de execução usando bundles `.properties` internacionalizados
+
+Cada funcionalidade segue os princípios de design SOLID e as melhores práticas de TDD, oferecendo uma base robusta e extensível para aprimoramentos futuros—seja uma interface gráfica, integração via API web.
+
+
 
 ## Table of Contents
 
