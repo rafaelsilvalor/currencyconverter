@@ -38,7 +38,6 @@ class ResourceExtractorTest {
         ResourceExtractor.extractDefaults(tempBase);
 
         List<String> expected = List.of(
-                "application.properties",
                 "config.properties",
                 "paths.properties"
         );

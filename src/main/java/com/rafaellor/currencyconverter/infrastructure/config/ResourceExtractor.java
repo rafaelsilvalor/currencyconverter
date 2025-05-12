@@ -13,7 +13,6 @@ import java.util.Map;
  */
 public class ResourceExtractor {
     private static final List<String> SETTINGS_RESOURCES = List.of(
-            "application.properties",
             "config.properties",
             "paths.properties"
     );

@@ -1,6 +1,5 @@
 package com.rafaellor.currencyconverter.cli.handlers;
 
-import com.rafaellor.currencyconverter.cli.CliConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,7 @@ public class ListHandlerTest {
     @Test
     @DisplayName("matches() returns true on 'cvc --list'")
     void testMatchesListFlag() {
-        String[] args = { CliConfig.COMMAND, "--list" };
+        String[] args = { "--list" };
         assertTrue(handler.matches(args));
     }
 

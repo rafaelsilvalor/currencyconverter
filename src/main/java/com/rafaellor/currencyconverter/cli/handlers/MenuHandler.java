@@ -39,8 +39,7 @@ public class MenuHandler implements CommandHandler {
     @Override
     public boolean matches(String[] args) {
         // cc (or cvc) with no flags
-        return args.length == 1
-                && args[0].equalsIgnoreCase(CliConfig.COMMAND);
+        return args.length == 0;
     }
 
     @Override

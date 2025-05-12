@@ -1,6 +1,5 @@
 package com.rafaellor.currencyconverter.cli.handlers;
 
-import com.rafaellor.currencyconverter.cli.CliConfig;
 import com.rafaellor.currencyconverter.domain.ExchangeRateService;
 import com.rafaellor.currencyconverter.infrastructure.api.ExchangeRateClient;
 import com.rafaellor.currencyconverter.infrastructure.config.ConfigLoader;
@@ -19,9 +18,8 @@ public class ListHandler implements CommandHandler {
 
     @Override
     public boolean matches(String[] args) {
-        return args.length == 2
-                && args[0].equalsIgnoreCase(CliConfig.COMMAND)
-                && args[1].equalsIgnoreCase("--list");
+        return args.length == 1
+                && args[0].equalsIgnoreCase("--list");
     }
 
     @Override

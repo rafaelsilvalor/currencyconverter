@@ -1,73 +1,62 @@
 package com.rafaellor.currencyconverter.cli;
 
 import com.rafaellor.currencyconverter.cli.handlers.CommandHandler;
+import com.rafaellor.currencyconverter.cli.handlers.ListHandler;
+import com.rafaellor.currencyconverter.cli.handlers.MenuHandler;
+import com.rafaellor.currencyconverter.cli.handlers.OneLineConversion;
 import org.reflections.Reflections;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Discovers and dispatches CLI command handlers.
+ * Dispatches CLI commands based on first argument, supporting both legacy and new flags.
  */
 public class CommandLineDispatcher {
-    private final List<CommandHandler> handlers = new ArrayList<>();
     private final ResourceBundle messages;
+    private final List<CommandHandler> handlers = new ArrayList<>();
 
     public CommandLineDispatcher(ResourceBundle messages) {
         this.messages = messages;
-
-        // Scan for all CommandHandler implementations
-        Reflections reflections = new Reflections("com.rafaellor.currencyconverter.cli.handlers");
-        for (Class<? extends CommandHandler> handlerClass
-                : reflections.getSubTypesOf(CommandHandler.class)) {
-
-            CommandHandler handlerInstance;
-            // 1) Try constructor(ResourceBundle)
+        // Auto-discover handlers via reflections
+        Reflections refs = new Reflections("com.rafaellor.currencyconverter.cli.handlers");
+        for (Class<? extends CommandHandler> cls : refs.getSubTypesOf(CommandHandler.class)) {
             try {
-                Constructor<? extends CommandHandler> rbCtor =
-                        handlerClass.getConstructor(ResourceBundle.class);
-                handlerInstance = rbCtor.newInstance(messages);
-
-            } catch (NoSuchMethodException e1) {
-                // 2) Fallback to no-arg constructor
-                try {
-                    Constructor<? extends CommandHandler> noArgCtor =
-                            handlerClass.getConstructor();
-                    handlerInstance = noArgCtor.newInstance();
-
-                } catch (NoSuchMethodException
-                         | InstantiationException
-                         | IllegalAccessException
-                         | InvocationTargetException e2) {
-                    throw new RuntimeException(
-                            "Cannot instantiate handler " + handlerClass.getName(), e2);
-                }
-
-            } catch (InstantiationException
-                     | IllegalAccessException
-                     | InvocationTargetException e) {
-                throw new RuntimeException(
-                        "Failed to construct handler " + handlerClass.getName(), e);
+                handlers.add(cls.getDeclaredConstructor(ResourceBundle.class).newInstance(messages));
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to construct handler " + cls.getName(), e);
             }
-
-            handlers.add(handlerInstance);
         }
     }
 
-    /**
-     * Finds the first handler whose matches(...) returns true, and invokes execute(...).
-     * If none match, prints an error message.
-     */
     public void handle(String[] args) {
+//        // Guard clause: no args
+//        if (args.length == 0) {
+//            System.err.println("!! CLI Error: No command provided");
+//            return;
+//        }
+            if (args.length == 0) {
+                    // No flags → launch interactive menu
+                           new MenuHandler(messages).execute(new String[0]);
+                    return;
+                }
+
+        // Normalize legacy oneline flag
+//        if ("--oneline".equals(args[0])) {
+//            args[0] = "--convert";
+//        }
+
+        // Attempt to match and execute a handler
         for (CommandHandler handler : handlers) {
             if (handler.matches(args)) {
                 handler.execute(args);
                 return;
             }
         }
+
+        // No handler matched → error message
         System.out.println(messages.getString("error.invalid.commandline"));
+
     }
 }

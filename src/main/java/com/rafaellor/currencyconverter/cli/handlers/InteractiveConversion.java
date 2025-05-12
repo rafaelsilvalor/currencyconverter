@@ -22,9 +22,8 @@ public class InteractiveConversion implements CommandHandler {
 
     @Override
     public boolean matches(String[] args) {
-        return args.length == 2
-                && args[0].equalsIgnoreCase(CliConfig.COMMAND)
-                && args[1].equalsIgnoreCase("--interactive");
+        return args.length == 1
+                && args[0].equalsIgnoreCase("--interactive");
     }
 
     @Override

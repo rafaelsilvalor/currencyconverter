@@ -5,12 +5,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
 public class CommandLineParserTest {
 
     @Test
     void shouldParseValidCurrencyCommand(){
-        String[] args = {"cvc","--oneline", "usd", "brl", "50.0"};
+        String[] args = {"--oneline", "usd", "brl", "50.0"};
         CommandLineParser.Command command = CommandLineParser.parse(args);
 
 
@@ -21,7 +20,7 @@ public class CommandLineParserTest {
 
     @Test
     void shouldThrowOnInvalidCommandFormat() {
-        String[] args = {"cvc","--oneline", "usd", "brl"};
+        String[] args = {"--oneline", "usd", "brl"};
         assertThrows(IllegalArgumentException.class, () -> CommandLineParser.parse(args));
     }
 }

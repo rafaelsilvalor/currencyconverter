@@ -1,14 +1,13 @@
+// This class is deprecated and will be removed.
+// CLI configuration is now handled directly via command-line arguments.
 package com.rafaellor.currencyconverter.cli;
 
-import com.rafaellor.currencyconverter.infrastructure.config.ConfigLoader;
-
-
-public final class CliConfig {
-    private CliConfig() { }
-
-    public static final String COMMAND =
-            System.getProperty(
-                    "cli.command",
-                    ConfigLoader.get("cli.command", "cvc")
-            );
+/**
+ * TODO: Remove this class once all references are eliminated.
+ */
+@Deprecated
+public class CliConfig {
+    private CliConfig() {
+        throw new UnsupportedOperationException("CliConfig is deprecated");
+    }
 }

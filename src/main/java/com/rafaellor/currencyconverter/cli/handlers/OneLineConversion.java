@@ -28,9 +28,8 @@ public class OneLineConversion implements CommandHandler {
 
     @Override
     public boolean matches(String[] args) {
-        return args.length == 5
-                && args[0].equalsIgnoreCase(CliConfig.COMMAND)
-                && args[1].equalsIgnoreCase("--oneline");
+        return args.length == 4
+                && args[0].equalsIgnoreCase("--oneline");
     }
 
     @Override
