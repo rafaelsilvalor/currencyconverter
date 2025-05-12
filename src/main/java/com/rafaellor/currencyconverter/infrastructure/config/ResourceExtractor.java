@@ -6,20 +6,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Extracts default resource files from the classpath into structured external folders on first run.
+ * Extracts default resource files from the classpath into structured external folders on first run,
+ * with optional verbose init logging controlled via init.verbose in config.properties.
  */
 public class ResourceExtractor {
     private static final List<String> SETTINGS_RESOURCES = List.of(
             "config.properties",
             "paths.properties"
-    );
-
-    private static final List<String> DATA_ROOT_RESOURCES = List.of(
-            "favorites.properties",
-            "Conversion-history.txt"
     );
 
     private static final List<String> DATA_LANG_RESOURCES = List.of(
@@ -33,27 +28,25 @@ public class ResourceExtractor {
             "install-cvc.sh"
     );
 
-    /**
-     * Extract defaults into structured folders ('settings', 'data', 'scripts') under current directory.
-     */
+    // Read the verbose flag after ConfigLoader has loaded settings/config.properties
+    private static final boolean VERBOSE = Boolean.parseBoolean(
+            ConfigLoader.getInstance().getOrDefault("config.verbose", "true")
+    );
+
     public static void extractDefaults() {
-        extractDefaults(Path.of(".").toAbsolutePath());
+        extractDefaults(Path.of(".").toAbsolutePath().normalize());
     }
 
     public static void extractDefaults(Path baseDir) {
-        // Settings
+        // Settings folder
         Path settingsDir = baseDir.resolve("settings");
         SETTINGS_RESOURCES.forEach(name -> extractResource(settingsDir, name));
 
-        // Data root files
-        Path dataDir = baseDir.resolve("data");
-        DATA_ROOT_RESOURCES.forEach(name -> extractResource(dataDir, name));
+        // Data languages only
+        Path dataLangDir = baseDir.resolve("data").resolve("languages");
+        DATA_LANG_RESOURCES.forEach(name -> extractResource(dataLangDir, name));
 
-        // Data language files
-        Path langDir = dataDir.resolve("languages");
-        DATA_LANG_RESOURCES.forEach(name -> extractResource(langDir, name));
-
-        // Scripts
+        // Scripts folder
         Path scriptsDir = baseDir.resolve("scripts");
         SCRIPT_RESOURCES.forEach(name -> extractResource(scriptsDir, name));
     }
@@ -62,24 +55,26 @@ public class ResourceExtractor {
         try {
             if (Files.notExists(dir)) {
                 Files.createDirectories(dir);
-                System.out.println("✅ [INIT] Created directory: " + dir);
+                if (VERBOSE) System.out.println("✅ [INIT] Created directory: " + dir);
             }
             Path target = dir.resolve(resourceName);
             if (Files.exists(target)) {
-                System.out.println("⚙️  [INIT] Resource already exists, skipping: " + target);
+                if (VERBOSE) System.out.println("⚙️  [INIT] Resource already exists, skipping: " + target);
                 return;
             }
-            try (InputStream in = ResourceExtractor.class.getClassLoader().getResourceAsStream(resourceName)) {
+            try (InputStream in = ResourceExtractor.class
+                    .getClassLoader()
+                    .getResourceAsStream(resourceName)) {
                 if (in == null) {
-                    System.err.println("⚠️  [INIT] Resource missing in JAR: " + resourceName);
+                    if (VERBOSE) System.err.println("⚠️  [INIT] Resource missing in JAR: " + resourceName);
                     return;
                 }
                 Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
-                System.out.println("✅ [INIT] Extracted " + resourceName + " to " + dir);
+                if (VERBOSE) System.out.println("✅ [INIT] Extracted " + resourceName + " to " + dir);
             }
         } catch (IOException e) {
-            System.err.println("❌ [INIT] Failed to extract " + resourceName + " to " + dir + ": " + e.getMessage());
-            throw new RuntimeException(e);
+            if (VERBOSE) System.err.println("❌ [INIT] Failed to extract " + resourceName + " to " + dir + ": " + e.getMessage());
+            throw new RuntimeException("Failed to extract resource " + resourceName, e);
         }
     }
 }
