@@ -1,8 +1,9 @@
 package com.rafaellor.currencyconverter.cli;
 
+import com.rafaellor.currencyconverter.infrastructure.config.ConfigLoader;
 import com.rafaellor.currencyconverter.infrastructure.config.FolderInitializer;
-import com.rafaellor.currencyconverter.infrastructure.config.ResourceExtractor;
 import com.rafaellor.currencyconverter.infrastructure.config.PathsConfig;
+import com.rafaellor.currencyconverter.infrastructure.config.ResourceExtractor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,51 +12,58 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 public class Main {
     public static void main(String[] args) {
-        // Step 3: Ensure external folders and default resources
+        // 1. Initialize folders and defaults
         try {
             FolderInitializer.initialize();
             ResourceExtractor.extractDefaults();
         } catch (RuntimeException e) {
-            System.err.println("Error during initial setup: " + e.getMessage());
-            // Proceeding with startup even if setup fails
+            // always continue
         }
 
-        // Determine settings file location, with fallback if not configured
-        String settingsFilePath;
-        try {
-            settingsFilePath = PathsConfig.getInstance().get("language.settings.file");
-        } catch (IllegalArgumentException e) {
-            // key missing → fall back to default location
-            settingsFilePath = "settings/settings.properties";
-        }
+        // 2. Load config.properties (for language/country and config.verbose)
+        ConfigLoader config = ConfigLoader.getInstance();
+        boolean verbose = Boolean.parseBoolean(config.getOrDefault("config.verbose", "false"));
 
-        Path settingsPath = Paths.get(settingsFilePath);
+        // 3. Load settings.properties
+        Path settingsPath = Paths.get(
+                config.getOrDefault("language.settings.file", "settings/settings.properties")
+        );
         Properties settings = new Properties();
-
         if (Files.exists(settingsPath)) {
             try (InputStream in = Files.newInputStream(settingsPath)) {
                 settings.load(in);
             } catch (IOException e) {
-                System.err.println("Warning: Failed to read settings. Using defaults.");
+                if (verbose) System.err.println("Warning: Failed to read settings. Using defaults.");
             }
         } else {
-            System.err.println("Warning: Settings file not found. Using defaults.");
+            if (verbose) System.err.println("Warning: Settings file not found. Using defaults.");
         }
 
-        // Initialize Locale & ResourceBundle
+        // 4. Determine locale
         String lang    = settings.getProperty("language", "en");
         String country = settings.getProperty("country",  "US");
         Locale locale  = new Locale(lang, country);
-        ResourceBundle messages = ResourceBundle.getBundle("messages", locale);
 
-        // Instantiate dispatcher (auto-discovers ALL handlers)
+        // 5. Load messages bundle
+        ResourceBundle messages;
+        Path extBundle = Paths.get("settings", "messages_" + lang + "_" + country + ".properties");
+        if (Files.exists(extBundle)) {
+            try (InputStream in = Files.newInputStream(extBundle)) {
+                messages = new PropertyResourceBundle(in);
+            } catch (IOException e) {
+                messages = ResourceBundle.getBundle("messages", locale);
+            }
+        } else {
+            messages = ResourceBundle.getBundle("messages", locale);
+        }
+
+        // 6. Dispatch commands
         CommandLineDispatcher dispatcher = new CommandLineDispatcher(messages);
-
-        // Hand off to the dispatcher
         dispatcher.handle(args);
     }
 }
